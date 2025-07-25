@@ -10,7 +10,8 @@ ssh into the App Server 13: `ssh banner@172.16.238.12`
 
 sudo useradd -m -s /sbin/nologin john
 
-Explanation:
+# Explanation:
+
 sudo: Runs the command with administrative privileges.
 
 useradd: Command to create a new user.
