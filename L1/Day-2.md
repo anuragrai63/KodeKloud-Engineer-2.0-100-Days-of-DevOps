@@ -6,7 +6,7 @@ Create a user named javed on App Server 2 in Stratos Datacenter. Set the expiry 
 
 # Solution
 
-ssh into the App Server 3: `ssh steve@172.16.238.11`
+ssh into the App Server 2: `ssh steve@172.16.238.11`
 
 sudo useradd -e 2024-01-28 javed
 
