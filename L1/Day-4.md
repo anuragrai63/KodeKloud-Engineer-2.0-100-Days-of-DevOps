@@ -9,12 +9,13 @@ Your task is to grant executable permissions to the /tmp/xfusioncorp.sh script o
 
 ssh into the App Server 2: `ssh steve@172.16.238.11`
 
-chmod +x  /tmp/xfusioncorp.sh 
+chmod 755  /tmp/xfusioncorp.sh 
 
 # Explanation:
 
-chmod +x sets executable permission.
+chmod 755 sets executable permission for all user.
 
-<img width="1426" height="258" alt="image" src="https://github.com/user-attachments/assets/a928b466-450c-4ecb-a886-51d628e62a71" />
+<img width="1102" height="94" alt="image" src="https://github.com/user-attachments/assets/3cb57c2e-2043-4555-bf57-a832b0f2b0c2" />
+
 
 Check the result 
