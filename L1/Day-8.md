@@ -19,6 +19,8 @@ yum: Package Manager
 Pip: install module 
 
 
+
+
 <img width="1856" height="450" alt="image" src="https://github.com/user-attachments/assets/c97a45d4-692b-46a3-ae5e-2263c76de4b0" />
 
 
