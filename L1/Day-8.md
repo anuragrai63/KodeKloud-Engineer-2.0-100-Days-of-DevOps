@@ -16,6 +16,7 @@ ansible --version
 # Explanation:
 
 yum: Package Manager
+
 Pip: install module 
 
 
