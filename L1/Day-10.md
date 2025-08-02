@@ -26,7 +26,7 @@ sudo chown tony:tony /scripts
 
 sudo vi /scripts/beta_backup.sh
 
-Populate below
+Populate below==
 
 #!/bin/bash
 
@@ -48,7 +48,7 @@ scp "${LOCAL_BACKUP}/${ARCHIVE_NAME}" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BA
 
 chmod +x /scripts/beta_backup.sh
 
-Generate key and copy pub key in backup server
+Generate key and copy pub key in backup server==
 
 ssh-keygen -t rsa
 
