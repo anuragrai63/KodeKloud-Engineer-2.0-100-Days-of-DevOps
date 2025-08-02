@@ -35,7 +35,7 @@ Correct Permission
 
 sudo chown -R mysql:mysql /run/mariadb
 
-Restart Permission
+Restart Service
 
 sudo systemctl restart mariadb
 
