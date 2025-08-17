@@ -36,7 +36,9 @@ Change the port number of Sendmail-- By editing sendmail.cf and restart sendmail
 # Restart the HTTPD service and check status-
 
 sudo systemctl restart httpd
+
 sudo systemctl status httpd
+
 sudo ss -ltnp | grep :6300
 
 curl -sI http://stapp01:6300 >/dev/null && echo "$host is OK" || echo "stapp01 is DOWN"
