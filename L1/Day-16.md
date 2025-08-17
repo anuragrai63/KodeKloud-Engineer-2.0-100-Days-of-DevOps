@@ -33,7 +33,7 @@ worker_processes auto;
 error_log /var/log/nginx/error.log;
 pid /run/nginx.pid;
 
-# Load dynamic modules.
+
 include /usr/share/nginx/modules/*.conf;
 
 events {
