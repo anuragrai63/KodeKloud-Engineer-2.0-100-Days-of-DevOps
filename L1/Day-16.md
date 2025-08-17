@@ -1,56 +1,87 @@
-Step-by-Step Setup on App Server 2
-✅ 1. SSH into App Server 2
-bash
-ssh steve@stapp02
-✅ 2. Install and Enable Nginx
-bash
+# Instructions
+Day by day traffic is increasing on one of the websites managed by the Nautilus production support team. Therefore, the team has observed a degradation in website performance. Following discussions about this issue, the team has decided to deploy this application on a high availability stack i.e on Nautilus infra in Stratos DC. They started the migration last month and it is almost done, as only the LBR server configuration is pending. Configure LBR server as per the information given below:
+
+a. Install nginx on LBR (load balancer) server.
+
+b. Configure load-balancing with the an http context making use of all App Servers. Ensure that you update only the main Nginx configuration file located at /etc/nginx/nginx.conf.
+
+c. Make sure you do not update the apache port that is already defined in the apache configuration on all app servers, also make sure apache service is up and running on all app servers.
+
+d. Once done, you can access the website using StaticApp button on the top bar.
+
+# Solution
+
+ssh loki@stlb01
+
 sudo yum install -y nginx
+
 sudo systemctl enable nginx
-sudo systemctl start nginx
-✅ 3. Move SSL Certificate and Key to Secure Location
-bash
-sudo mkdir -p /etc/nginx/ssl
-sudo mv /tmp/nautilus.crt /etc/nginx/ssl/
-sudo mv /tmp/nautilus.key /etc/nginx/ssl/
-✅ 4. Configure Nginx for SSL
-Edit the default server block:
 
-bash
-sudo vi /etc/nginx/nginx.conf
-Inside the http block, add this server block (or modify existing one):
+Verify Apache on App Servers With port number 
 
-nginx
-server {
-    listen 443 ssl;
-    server_name localhost;
+ssh tony@stapp01 'sudo systemctl status httpd';sudo ss -tulnp | grep httpd
 
-    ssl_certificate     /etc/nginx/ssl/nautilus.crt;
-    ssl_certificate_key /etc/nginx/ssl/nautilus.key;
+ssh steve@stapp02 'sudo systemctl status httpd';sudo ss -tulnp | grep httpd
 
-    location / {
-        root   /usr/share/nginx/html;
-        index  index.html;
+ssh banner@stapp03 'sudo systemctl status httpd';sudo ss -tulnp | grep httpd
+
+# Edit the main Nginx config file:
+
+"
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+# Load dynamic modules.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 4096;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    # Upstream app servers (use correct Apache port, e.g. 8080)
+    upstream backend {
+        server stapp01:5004;
+        server stapp02:5004;
+        server stapp03:5004;
+    }
+
+    # Load balancer server block
+    server {
+        listen 80;
+        server_name _;
+
+        location / {
+            proxy_pass http://backend;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
     }
 }
-Save and exit.
+"
 
-✅ 5. Create index.html with Welcome Message
-bash
-echo "Welcome!" | sudo tee /usr/share/nginx/html/index.html
-✅ 6. Restart Nginx to Apply Changes
-bash
-sudo systemctl restart nginx
-✅ 7. Test from Jump Host
-From the jump host, run:
+sudo systemctl start nginx
 
-bash
-curl -Ik https://stapp02
-Or use IP if DNS isn’t configured:
+Click on static app to see status--
 
-bash
-curl -Ik https://<stapp02-IP>
-Expected output:
-
-Code
-HTTP/1.1 200 OK
-...
+Check the result 
