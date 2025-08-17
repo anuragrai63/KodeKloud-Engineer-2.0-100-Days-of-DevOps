@@ -27,7 +27,8 @@ sudo vi /etc/nginx/nginx.conf
 
 Inside the http block, add this server block (or modify existing one):
 
-`server {
+" 
+server {
     listen 443 ssl;
     server_name localhost;
 
@@ -39,7 +40,7 @@ Inside the http block, add this server block (or modify existing one):
         index  index.html;
     }
 }
-`
+"
 # Create index.html with Welcome Message
 echo "Welcome!" | sudo tee /usr/share/nginx/html/index.html
 
