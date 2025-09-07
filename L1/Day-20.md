@@ -1,90 +1,115 @@
-# Instructions
-The Nautilus application development team is planning to launch a new PHP-based application, which they want to deploy on Nautilus infra in Stratos DC. The development team had a meeting with the production support team and they have shared some requirements regarding the infrastructure. Below are the requirements they shared:
+# Day 20: Deploying PHP Application with Nginx and PHP-FPM 8.3
 
-a. Install nginx on app server 3 , configure it to use port 8098 and its document root should be /var/www/html.
+## Scenario
+The Nautilus application development team plans to launch a new PHP-based application and wants to deploy it on the Nautilus infrastructure in Stratos DC. You have been tasked to set up the environment as per the requirements from the production support and development teams.
 
-b. Install php-fpm version 8.3 on app server 3, it must use the unix socket /var/run/php-fpm/default.sock (create the parent directories if don't exist).
+---
 
-c. Configure php-fpm and nginx to work together.
+## Task Breakdown
 
-d. Once configured correctly, you can test the website using curl http://stapp03:8098/index.php command from jump host.
+### a. Install and Configure Nginx
 
-NOTE: We have copied two files, index.php and info.php, under /var/www/html as part of the PHP-based application setup. Please do not modify these files.
+1. **Install Nginx on app server 3:**
+   ```bash
+   sudo yum install nginx -y
+   ```
 
-# Solution
-ssh app3 hosts:
+2. **Configure Nginx to use port `8098` and set document root:**
+   - Edit the default server block configuration:
+     ```bash
+     sudo vi /etc/nginx/conf.d/default.conf
+     ```
+   - Replace its contents with:
+     ```nginx
+     server {
+         listen 8098;
+         server_name stapp03;
 
-sudo yum install nginx -y
+         root /var/www/html;
+         index index.php index.html;
 
-Edit the default server block:
+         location / {
+             try_files $uri $uri/ =404;
+         }
 
-sudo vi /etc/nginx/conf.d/default.conf
+         location ~ \.php$ {
+             include fastcgi_params;
+             fastcgi_pass unix:/var/run/php-fpm/default.sock;
+             fastcgi_index index.php;
+             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+         }
+     }
+     ```
 
-Replace its contents with:
+---
 
-server {
-    listen 8098;
-    server_name stapp03;
+### b. Install PHP-FPM 8.3
 
-    root /var/www/html;
-    index index.php index.html;
+1. **Enable appropriate repositories:**
+   ```bash
+   sudo dnf -y install epel-release
+   sudo dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+   ```
 
-    location / {
-        try_files $uri $uri/ =404;
-    }
+2. **Reset and enable PHP 8.3 module:**
+   ```bash
+   sudo dnf -y module reset php
+   sudo dnf -y module enable php:remi-8.3
+   ```
 
-    location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_pass unix:/var/run/php-fpm/default.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    }
-}
+3. **Install PHP-FPM 8.3 and common extensions:**
+   ```bash
+   sudo dnf -y install php-fpm php-cli php-common php-opcache php-mbstring php-xml php-gd php-intl php-mysqlnd php-zip
+   ```
 
-Install PHP-FPM 8.3:- 
+4. **Verify PHP version:**
+   ```bash
+   php -v    # Should display PHP 8.3.x
+   ```
 
-sudo dnf -y install epel-release
+---
 
-sudo dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+### c. Configure PHP-FPM to Use Custom Socket
 
-Reset PHP module and enable the 8.3 stream:
+1. **Create the socket directory (if not exists):**
+   ```bash
+   sudo mkdir -p /var/run/php-fpm
+   ```
 
-sudo dnf -y module reset php
+2. **Edit PHP-FPM pool configuration:**
+   ```bash
+   sudo vi /etc/php-fpm.d/www.conf
+   ```
+   - Update the following lines:
+     ```
+     listen = /var/run/php-fpm/default.sock
+     listen.owner = nginx
+     listen.group = nginx
+     listen.mode = 0660
+     ```
 
-sudo dnf -y module enable php:remi-8.3
+---
 
-Install PHP-FPM 8.3 and common extensions:
+### d. Start and Enable Services
 
-sudo dnf -y install php-fpm php-cli php-common php-opcache php-mbstring php-xml php-gd php-intl php-mysqlnd php-zip
-
-Verify:
-
-php -v (should show PHP 8.3.x)
-
-Configure PHP-FPM to Use Custom Socket:
-
-sudo mkdir -p /var/run/php-fpm
-
-Edit the PHP-FPM pool config:
-
-sudo vi /etc/php-fpm.d/www.conf
-
-Update these lines:
-
-listen = /var/run/php-fpm/default.sock
-listen.owner = nginx
-listen.group = nginx
-listen.mode = 0660
-
-Start and Enable Services:
-
+```bash
 sudo systemctl enable php-fpm nginx
-
 sudo systemctl start php-fpm nginx
+```
 
-# Test the Setup
-From the jump host, run:
+---
 
-curl http://stapp03:8098/index.php
+### e. Test the Setup
 
-Check the result 
+- **From the jump host, run:**
+  ```bash
+  curl http://stapp03:8098/index.php
+  ```
+  - You should see the expected output from the PHP application.
+
+---
+
+**Note:**  
+Two files, `index.php` and `info.php`, are already copied under `/var/www/html` as part of the setup. **Do not modify these files.**
+
+---
