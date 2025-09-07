@@ -1,38 +1,57 @@
-# Instructions
-Day by day traffic is increasing on one of the websites managed by the Nautilus production support team. Therefore, the team has observed a degradation in website performance. Following discussions about this issue, the team has decided to deploy this application on a high availability stack i.e on Nautilus infra in Stratos DC. They started the migration last month and it is almost done, as only the LBR server configuration is pending. Configure LBR server as per the information given below:
+# Day 16: Load Balancer Setup with Nginx
 
-a. Install nginx on LBR (load balancer) server.
+## Scenario
 
-b. Configure load-balancing with the an http context making use of all App Servers. Ensure that you update only the main Nginx configuration file located at /etc/nginx/nginx.conf.
+Day by day, traffic is increasing on one of the websites managed by the Nautilus production support team. As a result, the team has observed a degradation in website performance. After discussions about possible solutions, the team has decided to set up load balancing using Nginx.
 
-c. Make sure you do not update the apache port that is already defined in the apache configuration on all app servers, also make sure apache service is up and running on all app servers.
+---
 
-d. Once done, you can access the website using StaticApp button on the top bar.
+## Tasks
 
-# Solution
+**a.** Install Nginx on the LBR (Load Balancer) server.
 
+**b.** Configure load balancing in the main Nginx configuration file (`/etc/nginx/nginx.conf`) using the `http` context to balance requests across all App Servers.
+
+**c.** Do **not** update the Apache port that is already defined in the Apache configuration on all app servers. Also, ensure the Apache service is up and running on all app servers.
+
+**d.** Once completed, you can access the website using the **StaticApp** button on the top bar.
+
+---
+
+## Solution
+
+### 1. SSH into Load Balancer Server
+
+```bash
 ssh loki@stlb01
+```
 
+### 2. Install and Enable Nginx
+
+```bash
 sudo yum install -y nginx
-
 sudo systemctl enable nginx
+```
 
-Verify Apache on App Servers With port number 
+### 3. Verify Apache on App Servers and Check Port
 
-ssh tony@stapp01 'sudo systemctl status httpd';sudo ss -tulnp | grep httpd
+Check that Apache is running and note the port (e.g., 5004):
 
-ssh steve@stapp02 'sudo systemctl status httpd';sudo ss -tulnp | grep httpd
+```bash
+ssh tony@stapp01 'sudo systemctl status httpd'; sudo ss -tulnp | grep httpd
+ssh steve@stapp02 'sudo systemctl status httpd'; sudo ss -tulnp | grep httpd
+ssh banner@stapp03 'sudo systemctl status httpd'; sudo ss -tulnp | grep httpd
+```
 
-ssh banner@stapp03 'sudo systemctl status httpd';sudo ss -tulnp | grep httpd
+### 4. Edit the Main Nginx Configuration File
 
-# Edit the main Nginx config file:
+Edit `/etc/nginx/nginx.conf` (replace the upstream ports if Apache is running on a port other than 5004):
 
-"
+```nginx
 user nginx;
 worker_processes auto;
 error_log /var/log/nginx/error.log;
 pid /run/nginx.pid;
-
 
 include /usr/share/nginx/modules/*.conf;
 
@@ -56,7 +75,7 @@ http {
     include             /etc/nginx/mime.types;
     default_type        application/octet-stream;
 
-    # Upstream app servers (use correct Apache port, e.g. 8080)
+    # Upstream app servers (use correct Apache port)
     upstream backend {
         server stapp01:5004;
         server stapp02:5004;
@@ -78,10 +97,31 @@ http {
         }
     }
 }
-"
+```
 
+### 5. Start Nginx
+
+```bash
 sudo systemctl start nginx
+```
 
-Click on static app to see status--
+---
 
-Check the result 
+## 6. Validate
+
+- Click on the **StaticApp** button on the top bar to verify the setup.
+- Alternatively, use `curl` or a browser to access the load balancer's IP or domain.
+
+---
+
+## 7. Troubleshooting
+
+- Check Nginx status: `sudo systemctl status nginx`
+- Check logs:
+  - Access log: `/var/log/nginx/access.log`
+  - Error log: `/var/log/nginx/error.log`
+
+---
+
+**Result:**  
+If everything is configured properly, the website should load via the load balancer, distributing traffic evenly across all app servers.
