@@ -1,51 +1,71 @@
 # Instructions
-The Nautilus application development team has shared that they are planning to deploy one newly developed application on Nautilus infra in Stratos DC. The application uses PostgreSQL database, so as a pre-requisite we need to set up PostgreSQL database server as per requirements shared below:
 
-PostgreSQL database server is already installed on the Nautilus database server.
+The Nautilus application development team has shared that they are planning to deploy a newly developed application on Nautilus infra in Stratos DC. The application uses a PostgreSQL database, so as a prerequisite, a database and user need to be set up for the application.
 
-a. Create a database user kodekloud_sam and set its password to Rc5C9EyvbU.
+> **Note:** PostgreSQL database server is already installed on the Nautilus database server.
 
-b. Create a database kodekloud_db10 and grant full permissions to user kodekloud_sam on this database.
+### Tasks
 
-Note: Please do not try to restart PostgreSQL server service.
+a. **Create a database user** `kodekloud_sam` and set its password to `Rc5C9EyvbU`.
+
+b. **Create a database** `kodekloud_db10` and grant full permissions to user `kodekloud_sam` on this database.
+
+> **Important:** Please do **not** try to restart the PostgreSQL server service.
+
+---
 
 # Solution
-ssh peter@stdb01
 
-Switch to postgres user
+1. **SSH into the database server:**
+   ```sh
+   ssh peter@stdb01
+   ```
 
-sudo -i -u postgres
+2. **Switch to the `postgres` user:**
+   ```sh
+   sudo -i -u postgres
+   ```
 
-Enter PostgreSQL shell==
+3. **Enter the PostgreSQL shell:**
+   ```sh
+   psql
+   ```
 
-psql
+4. **Create the user:**
+   ```sql
+   CREATE USER kodekloud_sam WITH PASSWORD 'Rc5C9EyvbU';
+   ```
 
-Create the user==
+5. **Create the database:**
+   ```sql
+   CREATE DATABASE kodekloud_db10;
+   ```
 
-CREATE USER kodekloud_sam WITH PASSWORD 'Rc5C9EyvbU';
+6. **Grant all privileges on the database to the user:**
+   ```sql
+   GRANT ALL PRIVILEGES ON DATABASE kodekloud_db10 TO kodekloud_sam;
+   ```
 
-Create the database==
+7. **Verify the user and database:**
+   - List users:
+     ```sql
+     \du
+     ```
+   - List databases:
+     ```sql
+     \l
+     ```
 
-CREATE DATABASE kodekloud_db10;
+   You should see:
+   - `kodekloud_sam` in the user list
+   - `kodekloud_db10` in the database list
 
-Grant all privileges on that database==
+8. **Exit the PostgreSQL shell and logout:**
+   ```sh
+   \q
+   exit
+   ```
 
-GRANT ALL PRIVILEGES ON DATABASE kodekloud_db10 TO kodekloud_sam;
+9. **Check the result as required.**
 
-Verify==
-
-\du
-
-\l
-
-\du shows the user kodekloud_sam
-
-\l shows the database kodekloud_db10
-
-Exit==
-
-\q
-
-exit
-
-Check the result 
+---
