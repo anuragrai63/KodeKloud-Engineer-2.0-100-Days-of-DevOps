@@ -1,29 +1,50 @@
-# Instructions
-During the weekly meeting, the Nautilus DevOps team discussed about the automation and configuration management solutions that they want to implement. While considering several options, the team has decided to go with Ansible for now due to its simple setup and minimal pre-requisites. The team wanted to start testing using Ansible, so they have decided to use jump host as an Ansible controller to test different kind of tasks on rest of the servers.
+# Day 8: Installing Ansible with pip3
 
-Install ansible version 4.10.0 on Jump host using pip3 only. Make sure Ansible binary is available globally on this system, i.e all users on this system are able to run Ansible commands.
+## Scenario
 
-# Solution
+During the weekly meeting, the Nautilus DevOps team discussed automation and configuration management solutions to implement. After considering several options, the team decided to use Ansible and set it up on the Jump Host.
 
-Install Ansible version 4.10.0 on the Jump Host using pip3.
+---
 
+## Task
+
+**Install Ansible version 4.10.0 on the Jump Host using pip3 only. Ensure the Ansible binary is available globally so all users on this system can run Ansible commands.**
+
+---
+
+## Solution
+
+### 1. Install `python3-pip` (if not already installed)
+
+```bash
 sudo yum install python3-pip -y
+```
 
+---
+
+### 2. Install Ansible version 4.10.0 globally using pip3
+
+```bash
 sudo pip3 install ansible==4.10.0
+```
 
+---
+
+### 3. Verify Ansible Installation
+
+```bash
 ansible --version
+```
 
-# Explanation:
+---
 
-yum: Package Manager
+## Explanation
 
-Pip: install module 
+- **yum:** The default package manager for installing system packages (here, to install pip3).
+- **pip3:** Python package manager used to install Python modules and packages (here, to install Ansible).
+- The use of `sudo` ensures Ansible is installed globally and accessible to all users.
 
+---
 
-
-
-<img width="1856" height="450" alt="image" src="https://github.com/user-attachments/assets/c97a45d4-692b-46a3-ae5e-2263c76de4b0" />
-
-
-
-Check the result 
+**Result:**  
+Ansible 4.10.0 is now installed globally on the Jump Host and can be accessed by any user by running `ansible` commands from the terminal.
