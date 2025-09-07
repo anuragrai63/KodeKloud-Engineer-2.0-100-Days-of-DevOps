@@ -1,67 +1,100 @@
-# Instructions
+# Day 10: Automated Website Backup Script
 
-The production support team of xFusionCorp Industries is working on developing some bash scripts to automate different day to day tasks. One is to create a bash script for taking websites backup. They have a static website running on App Server 1 in Stratos Datacenter, and they need to create a bash script named beta_backup.sh which should accomplish the following tasks. (Also remember to place the script under /scripts directory on App Server 1).
+## Scenario
 
-a. Create a zip archive named xfusioncorp_beta.zip of /var/www/html/beta directory.
+The production support team of xFusionCorp Industries is working on developing bash scripts to automate various day-to-day tasks. One such task is creating a script for taking website backups.  
+Your goal is to create a bash script to back up a specific website directory, store the backup locally, and transfer it to the Nautilus Backup Server without requiring a password for the transfer.
 
-b. Save the archive in /backup/ on App Server 1. This is a temporary storage, as backups from this location will be clean on weekly basis. Therefore, we also need to save this backup archive on Nautilus Backup Server.
+---
 
-c. Copy the created archive to Nautilus Backup Server server in /backup/ location.
+## Tasks
 
-d. Please make sure script won't ask for password while copying the archive file. Additionally, the respective server user (for example, tony in case of App Server 1) must be able to run it.
+a. **Create a zip archive** named `xfusioncorp_beta.zip` of the `/var/www/html/beta` directory.  
+b. **Save the archive** in `/backup/` on **App Server 1**. This is a temporary storage location (cleared weekly).  
+c. **Copy the archive** to the **Nautilus Backup Server** in the `/backup/` directory.  
+d. **Ensure the script copies without asking for a password** (set up passwordless SSH), and that the respective server user (e.g., `tony` for App Server 1) can run the script.
 
-# Solution
+---
 
-Log in to the App & Backup server using SSH:
+## Solution
 
+### 1. Log in to App Server 1
+
+```bash
 ssh tony@172.16.238.10
+```
 
-ssh clint@172.16.238.16
+---
 
-On App Server
+### 2. Prepare Script Directory
 
+```bash
 sudo mkdir -p /scripts
-
 sudo chown tony:tony /scripts
+```
 
-sudo vi /scripts/beta_backup.sh
+---
 
-Populate below==
+### 3. Create the Backup Script
 
+Create `/scripts/beta_backup.sh` with the following content:
+
+```bash
 #!/bin/bash
 
 SOURCE_DIR="/var/www/html/beta"
-
 ARCHIVE_NAME="xfusioncorp_beta.zip"
-
 LOCAL_BACKUP="/backup"
-
 REMOTE_BACKUP="/backup"
+REMOTE_USER="clint"
+REMOTE_HOST="172.16.238.16"
 
-REMOTE_USER="clint"    
-
-REMOTE_HOST="172.16.238.16"    
-
+# Create zip archive
 zip -r "${LOCAL_BACKUP}/${ARCHIVE_NAME}" "$SOURCE_DIR"
 
+# Copy archive to Nautilus Backup Server
 scp "${LOCAL_BACKUP}/${ARCHIVE_NAME}" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BACKUP}/"
+```
 
+Make the script executable:
+
+```bash
 chmod +x /scripts/beta_backup.sh
+```
 
-Generate key and copy pub key in backup server==
+---
 
+### 4. Set Up Passwordless SSH to Backup Server
+
+Generate an SSH key (if not already present):
+
+```bash
 ssh-keygen -t rsa
+```
 
+Copy the public key to the Nautilus Backup Server (`clint@172.16.238.16`):
+
+```bash
 ssh-copy-id clint@172.16.238.16
+```
 
-Test the Script
+---
 
+### 5. Test the Script
+
+```bash
 /scripts/beta_backup.sh
+```
 
-# Explanation:
+---
 
-To meet the backup requirements for the static website on App Server 1, here's how to create the beta_backup.sh script and configure password-less file transfer to the Nautilus Backup Server.
+## Explanation
 
-<img width="1498" height="248" alt="image" src="https://github.com/user-attachments/assets/a5f71508-7d3e-4b2b-8f72-2f1548f22ed0" />
+- The script creates a zip archive of the website directory and stores it locally in `/backup/`.
+- It then securely copies (via `scp`) the archive to the Nautilus Backup Server's `/backup/` directory.
+- Passwordless SSH ensures the script can run non-interactively.
 
-Check the result 
+---
+
+**Result:**  
+A backup script exists on **App Server 1** which archives the website and transfers it to the backup server, all without needing manual password entry.
