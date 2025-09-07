@@ -1,49 +1,73 @@
-# Instructions
+# Day 9: Setting Up Password-less SSH Authentication for Automation
 
-The system admins team of xFusionCorp Industries has set up some scripts on jump host that run on regular intervals and perform operations on all app servers in Stratos Datacenter. To make these scripts work properly we need to make sure the thor user on jump host has password-less SSH access to all app servers through their respective sudo users (i.e tony for app server 1). Based on the requirements, perform the following:
+## Scenario
 
-Set up a password-less authentication from user thor on jump host to all app servers through their respective sudo users.
+The system admins team of xFusionCorp Industries has created scripts on the jump host that routinely perform operations on all app servers in the Stratos Datacenter. To ensure these scripts run smoothly and non-interactively, password-less SSH authentication needs to be set up from the user `thor` on the jump host to all app servers, using their respective sudo users.
 
-# Solution
+---
 
-Log in to the database server using SSH:
+## Task
 
-ssh peter@172.16.239.10
+**Set up password-less authentication from user `thor` on the jump host to all app servers through their respective sudo users.**
 
-Check DB status 
+---
 
-sudo systemctl status mariadb
+## Solution
 
-Start DB
+### 1. Log in to the Jump Host as `thor`
 
-sudo systemctl start mariadb
+```bash
+ssh thor@jump_host_ip
+```
 
-It will throw below error
+---
 
-Job for mariadb.service failed because the control process exited with error code.
-See "systemctl status mariadb.service" and "journalctl -xeu mariadb.service" for details.
+### 2. Generate an SSH Key Pair (if not already present)
 
-Check log
+```bash
+ssh-keygen -t rsa
+```
+- Accept the default file location and leave the passphrase empty for automation.
 
-sudo cat /var/log/mariadb/mariadb.log
+---
 
-Check Permission
+### 3. Copy the Public Key to Each App Server
 
-ls -ld /run/mariadb
+Replace `<user>` and `<app_server_ip>` with the respective sudo user and app server IP:
 
-Correct Permission
+```bash
+ssh-copy-id <user>@<app_server_ip>
+```
 
-sudo chown -R mysql:mysql /run/mariadb
+For example, if the sudo users are `tony`, `steve`, and `banner` for `stapp01`, `stapp02`, and `stapp03` respectively:
 
-Restart Service
+```bash
+ssh-copy-id tony@stapp01
+ssh-copy-id steve@stapp02
+ssh-copy-id banner@stapp03
+```
 
-sudo systemctl restart mariadb
+---
 
-# Explanation:
+### 4. Test Password-less SSH Login
 
-The directory /run/mariadb/ must be owned by the mysql user and writable.
+Ensure you can connect without being prompted for a password:
 
-<img width="1718" height="450" alt="image" src="https://github.com/user-attachments/assets/0dc37ad7-461d-492f-9398-c7e974295357" />
+```bash
+ssh tony@stapp01
+ssh steve@stapp02
+ssh banner@stapp03
+```
 
+---
 
-Check the result 
+## Explanation
+
+- **SSH key pair** allows secure, password-less logins, which is ideal for automation.
+- **`ssh-copy-id`** simplifies copying the public key to the target server’s `~/.ssh/authorized_keys` file.
+- This setup ensures that automation scripts from the jump host can run commands on all app servers without manual password entry.
+
+---
+
+**Result:**  
+Password-less SSH authentication is now configured from `thor` on the jump host to all app servers via their respective sudo users. This enables seamless, non-interactive script execution across the infrastructure.
