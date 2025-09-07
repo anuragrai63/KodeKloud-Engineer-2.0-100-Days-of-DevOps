@@ -1,79 +1,130 @@
-# Instructions
-xFusionCorp Industries is planning to host a WordPress website on their infra in Stratos Datacenter. They have already done infrastructure configuration—for example, on the storage server they already have a shared directory /vaw/www/html that is mounted on each app host under /var/www/html directory. Please perform the following steps to accomplish the task:
+# Day 18: Hosting WordPress on Stratos Datacenter
 
-a. Install httpd, php and its dependencies on all app hosts.
+## Instructions
 
-b. Apache should serve on port 8087 within the apps.
+xFusionCorp Industries is planning to host a WordPress website on their infrastructure in the Stratos Datacenter. The infrastructure configuration is already completed (e.g., storage server setup). Complete the following tasks:
 
-c. Install/Configure MariaDB server on DB Server.
+1. **Install httpd, PHP, and dependencies on all app hosts.**
+2. **Configure Apache to serve on port 8087 on all app hosts.**
+3. **Install and configure MariaDB server on the DB server.**
+4. **Create a database and user:**
+    - Database: `kodekloud_db3`
+    - User: `kodekloud_gem`
+    - Password: `ksH85UJjhb`
+    - Ensure the user can perform all operations on the database.
+5. **Verify:** You should be able to access the website on the LBR link (App button on the top bar) and see:  
+   `App is able to connect to the database using user kodekloud_gem`
 
-d. Create a database named kodekloud_db3 and create a database user named kodekloud_gem identified as password ksH85UJjhb. Further make sure this newly created user is able to perform all operation on the database you created.
+---
 
-e. Finally you should be able to access the website on LBR link, by clicking on the App button on the top bar. You should see a message like App is able to connect to the database using user kodekloud_gem
+## Solution
 
-# Solution
-ssh each app hosts:
+### 1. Install Apache, PHP, and Dependencies (on each App Host)
 
+```sh
 sudo yum install -y httpd php php-mysqlnd php-fpm php-cli
+```
 
-Configure Apache to Serve on Port 8087
+---
 
+### 2. Configure Apache to Serve on Port 8087
+
+Open the Apache config file:
+
+```sh
 sudo vi /etc/httpd/conf/httpd.conf
+```
 
-Change the Listen directive:
+Change the `Listen` directive:
 
+```
 Listen 8087
+```
 
-Restart:-
+Restart Apache:
 
+```sh
 sudo systemctl restart httpd
+```
 
-# Install and Configure MariaDB on DB Server
+---
+
+### 3. Install and Configure MariaDB (on DB Server)
+
+```sh
 sudo yum install -y mariadb-server
-
 sudo systemctl enable mariadb
-
 sudo systemctl start mariadb
+```
 
-# Create Database and User
+---
+
+### 4. Create Database and User
+
+Login to MariaDB:
+
+```sh
 mysql -u root -p
+```
 
+Then run:
+
+```sql
 CREATE DATABASE kodekloud_db3;
 CREATE USER 'kodekloud_gem'@'%' IDENTIFIED BY 'ksH85UJjhb';
 GRANT ALL PRIVILEGES ON kodekloud_db3.* TO 'kodekloud_gem'@'%';
 FLUSH PRIVILEGES;
 EXIT;
+```
 
-# Ensure MariaDB allows remote connections: /etc/my.cnf.d/server.cnf
+**Allow remote connections:**  
+Edit `/etc/my.cnf.d/server.cnf` and set:
+
+```
 [mysqld]
 bind-address=0.0.0.0
+```
 
-# Restart DB
+Restart MariaDB:
+
+```sh
 sudo systemctl restart mariadb
+```
 
-# Deploy WordPress and Verify on App Host:-
+---
 
+### 5. Deploy WordPress and Configure (on App Host)
+
+```sh
 cd /var/www/html
-
 sudo wget https://wordpress.org/latest.tar.gz
-
 sudo tar -xzf latest.tar.gz
-
 sudo mv wordpress/* .
-
 sudo rm -rf wordpress latest.tar.gz
+```
 
-# Edit index.php
+**Edit `index.php` or the WordPress configuration file (`wp-config.php`):**
 
+```php
 define('DB_NAME', 'kodekloud_db3');
 define('DB_USER', 'kodekloud_gem');
 define('DB_PASSWORD', 'ksH85UJjhb');
-define('DB_HOST', 'stdb01');
+define('DB_HOST', 'stdb01');  // Replace 'stdb01' with your DB server hostname if different
+```
 
+Set permissions:
+
+```sh
 sudo chown -R apache:apache /var/www/html
-
 sudo systemctl restart httpd
+```
 
-# Click on App to view status 
+---
 
-Check the result 
+### 6. Verification
+
+- Click on the **App** button (top bar) to view the website.
+- You should see the message:  
+  `App is able to connect to the database using user kodekloud_gem`
+
+---
