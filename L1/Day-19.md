@@ -1,55 +1,94 @@
-# Instructions
-xFusionCorp Industries is planning to host two static websites on their infra in Stratos Datacenter. The development of these websites is still in-progress, but we want to get the servers ready. Please perform the following steps to accomplish the task:
+# Day 19: Hosting Multiple Static Websites with Apache
 
-a. Install httpd package and dependencies on app server 1.
+## Scenario
 
-b. Apache should serve on port 3002.
+xFusionCorp Industries is planning to host two static websites on their infrastructure in the Stratos Datacenter. The development of these websites is still in progress, but we want to get the servers ready. Please follow the instructions below to set up the environment.
 
-c. There are two website's backups /home/thor/ecommerce and /home/thor/apps on jump_host. Set them up on Apache in a way that ecommerce should work on the link http://localhost:3002/ecommerce/ and apps should work on link http://localhost:3002/apps/ on the mentioned app server.
+---
 
-d. Once configured you should be able to access the website using curl command on the respective app server, i.e curl http://localhost:3002/ecommerce/ and curl http://localhost:3002/apps/
+## Instructions
 
-# Solution
-ssh app1 hosts:
+**a.** Install the `httpd` package and its dependencies on App Server 1.
 
+**b.** Configure Apache to serve on port `3002`.
+
+**c.** There are two website backups located at `/home/thor/ecommerce` and `/home/thor/apps` on the jump host. Set them up on Apache so that:
+- `ecommerce` should be accessible at [http://localhost:3002/ecommerce/](http://localhost:3002/ecommerce/)
+- `apps` should be accessible at [http://localhost:3002/apps/](http://localhost:3002/apps/)
+
+**d.** Once configured, you should be able to access the websites using the `curl` command on the respective app server:
+- `curl http://localhost:3002/ecommerce/`
+- `curl http://localhost:3002/apps/`
+
+---
+
+## Solution
+
+### 1. Install Apache (`httpd`)
+
+```bash
 sudo yum install -y httpd
-
 sudo systemctl enable httpd
+```
 
-Configure Apache to Serve on Port 3002
+---
 
+### 2. Configure Apache to Serve on Port 3002
+
+Edit the Apache configuration file:
+
+```bash
 sudo vi /etc/httpd/conf/httpd.conf
+```
 
-Change the Listen directive:
+Change the `Listen` directive to:
 
+```
 Listen 3002
+```
 
-Restart:-
+Restart Apache for the changes to take effect:
 
+```bash
 sudo systemctl restart httpd
+```
 
-Set Up Static Sites from Jump Host:-
+---
 
+### 3. Set Up Static Sites from Jump Host
+
+Copy the backups from the jump host to App Server 1:
+
+```bash
 scp -r /home/thor/ecommerce tony@stapp01:/tmp/
-
 scp -r /home/thor/apps tony@stapp01:/tmp/
+```
 
-On app server 1, move them to Apache's root:
+On App Server 1, move the directories to Apache's root directory:
 
+```bash
 sudo mv /tmp/ecommerce /var/www/html/
-
 sudo mv /tmp/apps /var/www/html/
+```
 
-Set proper permissions:
+Set the correct permissions:
 
+```bash
 sudo chown -R apache:apache /var/www/html/ecommerce
-
 sudo chown -R apache:apache /var/www/html/apps
+```
 
-Verify with curl:- 
+---
 
+### 4. Verify the Setup
+
+Use `curl` to confirm both sites are accessible:
+
+```bash
 curl http://localhost:3002/ecommerce/
-
 curl http://localhost:3002/apps/
+```
 
-Check the result 
+If both commands return the expected website content, the setup is successful.
+
+---
