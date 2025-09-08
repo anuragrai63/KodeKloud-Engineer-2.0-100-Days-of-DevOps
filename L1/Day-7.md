@@ -1,26 +1,46 @@
-# Instructions
+# Day 7: Setting Up Password-less SSH Authentication
 
-The system admins team of xFusionCorp Industries has set up some scripts on jump host that run on regular intervals and perform operations on all app servers in Stratos Datacenter. To make these scripts work properly we need to make sure the thor user on jump host has password-less SSH access to all app servers through their respective sudo users (i.e tony for app server 1). Based on the requirements, perform the following:
+## Scenario
 
-Set up a password-less authentication from user thor on jump host to all app servers through their respective sudo users.
+The system admins team of xFusionCorp Industries has set up scripts on the jump host that run at regular intervals and perform operations on all app servers in the Stratos Datacenter.  
+To ensure these scripts run seamlessly, password-less SSH authentication needs to be set up from user `thor` on the jump host to all app servers through their respective sudo users.
 
-# Solution
+---
 
-Generate SSH Key on Jump Server:
+## Task
 
+**Set up password-less authentication from user `thor` on the jump host to all app servers through their respective sudo users.**
+
+---
+
+## Solution
+
+### 1. Generate SSH Key on the Jump Host (as user `thor`)
+
+```bash
 ssh-keygen -t rsa
+```
+- Press Enter to accept the default location and leave the passphrase empty for automation.
 
-Copy Public Key to App Servers
+---
 
+### 2. Copy the Public Key to Each App Server
+
+```bash
 ssh-copy-id tony@172.16.238.10
 ssh-copy-id steve@172.16.238.11
 ssh-copy-id banner@172.16.238.12
+```
 
-# Explanation:
+---
 
-ssh-copy-id to install thor's public key on each app server
+## Explanation
 
-<img width="830" height="466" alt="image" src="https://github.com/user-attachments/assets/3e6946d6-73a6-482d-b46b-54eeab8925a2" />
+- The `ssh-keygen` command generates an SSH key pair for the `thor` user.
+- `ssh-copy-id` installs `thor`'s public key on each app server, allowing for password-less SSH login.
+- This setup enables automation scripts to run remotely on app servers without manual password entry.
 
+---
 
-Check the result 
+**Result:**  
+Password-less authentication is now configured from user `thor` on the jump host to all app servers via their respective sudo users, enabling seamless script automation.
