@@ -1,20 +1,21 @@
-# Day 1: Creating a User with a Non-Interactive Shell
+# Day 21: Creating a Bare Git Repository
 
 ## Scenario
 
-The Nautilus development team has provided requirements to the DevOps team for a new application development project, specifically requesting the establishment of a Git repository. Follow the instructions below to create the Git repository on the Storage server in the Stratos DC:
-
-Utilize yum to install the git package on the Storage Server.
-
-Create a bare repository named /opt/media.git (ensure exact name usage).
+The Nautilus development team has requested that the DevOps team set up a Git repository for a new application development project. Follow the instructions below to install Git and create a bare repository as specified.
 
 ---
 
+## Tasks
 
+- **Install the Git package using `yum` on the Storage Server.**
+- **Create a bare repository named `/opt/media.git` (ensure the name matches exactly).**
+
+---
 
 ## Solution
 
-### 1. SSH into App Storage Server
+### 1. SSH into the Storage Server
 
 ```bash
 ssh natasha@ststor01
@@ -30,15 +31,21 @@ sudo yum install git -y
 
 ---
 
-Create a Bare Git Repository:
+### 3. Create a Bare Git Repository
 
+```bash
 sudo git init --bare /opt/media.git
+```
 
+---
 
 ## Explanation
 
-
+- **yum install git -y** installs the Git version control system on the server.
+- **git init --bare /opt/media.git** creates a bare repository at the specified path.  
+  - A **bare repository** is used for sharing and collaboration (no working directory; suitable for remote centralized storage).
 
 ---
 
 **Result:**  
+Git is now installed on the Storage Server, and a bare repository `/opt/media.git` has been created as required.
