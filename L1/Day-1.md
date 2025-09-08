@@ -1,26 +1,43 @@
-# Instructions
+# Day 1: Creating a User with a Non-Interactive Shell
 
-To accommodate the backup agent tool's specifications, the system admin team at xFusionCorp Industries requires the creation of a user with a non-interactive shell. Here's your task: 
-Create a user named john with a non-interactive shell on App Server 3.
+## Scenario
 
+To meet the requirements of the backup agent tool, the system admin team at xFusionCorp Industries needs to create a user account that cannot log in interactively.
 
-# Solution
+---
 
-ssh into the App Server 3: `ssh banner@172.16.238.12`
+## Task
 
+**Create a user named `john` with a non-interactive shell on App Server 3.**
+
+---
+
+## Solution
+
+### 1. SSH into App Server 3
+
+```bash
+ssh banner@172.16.238.12
+```
+
+---
+
+### 2. Create the User with a Non-Interactive Shell
+
+```bash
 sudo useradd -m -s /sbin/nologin john
+```
 
-# Explanation:
+---
 
-sudo: Runs the command with administrative privileges.
+## Explanation
 
-useradd: Command to create a new user.
+- **sudo**: Runs the command with administrative privileges.
+- **useradd**: Command to create a new user.
+- **-m**: Creates a home directory for the user.
+- **-s /sbin/nologin**: Assigns `/sbin/nologin` as the user's shell, preventing interactive login.
 
--m: Creates a home directory for the user.
+---
 
--s /sbin/nologin: Sets the shell to /sbin/nologin, which prevents interactive login.
-
-<img width="1214" height="154" alt="image" src="https://github.com/user-attachments/assets/39d90d15-48e7-4e70-90df-e896afdc4e63" />
-
-
-Check the result 
+**Result:**  
+A user named `john` is created with a non-interactive shell, ensuring the account cannot be used for standard logins but is available for automated processes.
