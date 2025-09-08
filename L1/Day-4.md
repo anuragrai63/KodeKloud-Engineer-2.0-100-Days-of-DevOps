@@ -1,21 +1,44 @@
-# Instructions
+# Day 4: Granting Executable Permissions to a Script
 
-In a bid to automate backup processes, the xFusionCorp Industries sysadmin team has developed a new bash script named xfusioncorp.sh. While the script has been distributed to all necessary servers, it lacks executable permissions on App Server 2 within the Stratos Datacenter.
+## Scenario
 
-Your task is to grant executable permissions to the /tmp/xfusioncorp.sh script on App Server 2. Additionally, ensure that all users have the capability to execute it.
+To automate backup processes, the xFusionCorp Industries sysadmin team has developed a bash script named `xfusioncorp.sh`. Although the script has been distributed to all necessary servers, it currently does not have the correct permissions for execution by users.
 
+---
 
-# Solution
+## Task
 
-ssh into the App Server 2: `ssh steve@172.16.238.11`
+**Grant executable permissions to the `/tmp/xfusioncorp.sh` script on App Server 2. Ensure all users have the capability to execute it.**
 
-chmod 755  /tmp/xfusioncorp.sh 
+---
 
-# Explanation:
+## Solution
 
-chmod 755 sets executable permission for all user.
+### 1. SSH into App Server 2
 
-<img width="1102" height="94" alt="image" src="https://github.com/user-attachments/assets/3cb57c2e-2043-4555-bf57-a832b0f2b0c2" />
+```bash
+ssh steve@172.16.238.11
+```
 
+---
 
-Check the result 
+### 2. Set Executable Permissions
+
+```bash
+chmod 755 /tmp/xfusioncorp.sh
+```
+
+---
+
+## Explanation
+
+- The command `chmod 755 /tmp/xfusioncorp.sh` sets the permissions to:
+  - Owner: read, write, execute
+  - Group: read, execute
+  - Others: read, execute
+- This ensures that **all users** can execute the script.
+
+---
+
+**Result:**  
+The script `/tmp/xfusioncorp.sh` is now executable by all users on App Server 2.
