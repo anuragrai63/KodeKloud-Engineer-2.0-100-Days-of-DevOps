@@ -1,42 +1,56 @@
-# Day 23: Fork a Git Repository
+# Day 23: Forking a Git Repository via Gitea
 
-# Scenario:
-There is a Git server utilized by the Nautilus project teams. Recently, a new developer named Jon joined the team and needs to begin working on a project. To begin, he must fork an existing Git repository. Follow the steps below:
+## Scenario
 
-Click on the Gitea UI button located on the top bar to access the Gitea page.
+A new developer, Jon, has joined the Nautilus project team and needs to start working on a project. His first task is to fork an existing Git repository using the Gitea web interface.
 
-Login to Gitea server using username jon and password Jon_pass123.
+---
 
-Once logged in, locate the Git repository named sarah/story-blog and fork it under the jon user.
+## Task
 
-Note: For tasks requiring web UI changes, screenshots are necessary for review purposes. Additionally, consider utilizing screen recording software such as loom.com to record and share your task completion process.
+**Fork the `sarah/story-blog` repository into Jon’s Gitea account (`jon`).**
 
-# Solution
+---
 
-1. Access the Gitea Web Interface
-Click the Gitea UI button on the top bar (usually available in your internal dashboard or dev portal).
+## Solution
 
-This will open the Gitea login page.
+### 1. Access the Gitea Web Interface
 
-2. Log in as Jon
-Username: jon
+- Click the **Gitea UI** button on the top bar (usually located in your internal dashboard or developer portal).
+- This will open the Gitea login page.
 
-Password: Jon_pass123
+---
 
-Click Sign In.
+### 2. Log in as Jon
 
-3. Locate the Repository
-Once logged in, use the search bar or navigate to Explore → Repositories.
+- **Username:** `jon`
+- **Password:** `Jon_pass123`
+- Click **Sign In**.
 
-Find the repository named sarah/story-blog.
-4. Fork the Repository
-Open the sarah/story-blog repository page.
+---
 
-Click the Fork button (usually located in the upper right corner).
+### 3. Locate the Repository
 
-Select jon as the target user account for the fork.
+- Use the search bar or navigate to **Explore → Repositories**.
+- Find the repository named **sarah/story-blog**.
 
-Confirm the action.
+---
 
-✅ Result:
-A new repository will be created under Jon’s account: jon/story-blog.
+### 4. Fork the Repository
+
+- Open the **sarah/story-blog** repository page.
+- Click the **Fork** button (typically found in the upper right corner).
+- When prompted, select `jon` as the target user/account for the fork.
+- Confirm the action.
+
+---
+
+## Result
+
+A new repository will be created under Jon’s account with the name:  
+**jon/story-blog**
+
+---
+
+> **Note:**  
+> For web UI tasks, take screenshots as required for review. Consider using screen recording software (e.g., [loom.com](https://www.loom.com/)) to record and share your task completion process.
