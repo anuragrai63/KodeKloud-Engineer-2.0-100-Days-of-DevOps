@@ -31,7 +31,8 @@ ssh natasha@ststor01
 ### 2. Clone the Local Git Repository
 
 ```bash
-git clone /opt/cluster.git /usr/src/kodekloudrepos
+sudo -u natasha test -d /usr/src/kodekloudrepos || sudo -u natasha mkdir -p /usr/src/kodekloudrepos
+sudo -u natasha git clone /opt/cluster.git /usr/src/kodekloudrepos/beta
 ```
 
 ---
