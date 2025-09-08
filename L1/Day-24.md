@@ -1,22 +1,54 @@
-# Day 24 Create Branch
+# Day 24: Creating a New Git Branch
 
-# Scenario
-Nautilus developers are actively working on one of the project repositories, /usr/src/kodekloudrepos/demo. Recently, they decided to implement some new features in the application, and they want to maintain those new changes in a separate branch. Below are the requirements that have been shared with the DevOps team:
+## Scenario
 
-On Storage server in Stratos DC create a new branch xfusioncorp_demo from master branch in /usr/src/kodekloudrepos/demo git repo.
+Nautilus developers are working on the `/usr/src/kodekloudrepos/demo` project repository. They need to start implementing new features and want to do so on a separate branch. Your task is to create a new branch named `xfusioncorp_demo` from the `master` branch in this repository on the Storage Server in Stratos Datacenter.
 
-Please do not try to make any changes in the code.
+> **Note:**  
+> Do **not** make any changes to the code—only create the branch.
 
-# Solution
+---
 
-ssh into storage server:
+## Task
+
+- Create a new branch named `xfusioncorp_demo` from the `master` branch in the `/usr/src/kodekloudrepos/demo` Git repository on the Storage Server.
+
+---
+
+## Solution
+
+### 1. SSH into the Storage Server
+
+```bash
 ssh natasha@ststor01
+```
 
-Ensure you're on the master branch:
+---
 
+### 2. Navigate to the Repository
+
+```bash
+cd /usr/src/kodekloudrepos/demo
+```
+
+---
+
+### 3. Ensure You Are on the Master Branch
+
+```bash
 git checkout master
+```
 
-Create the new branch
+---
+
+### 4. Create the New Branch
+
+```bash
 git branch xfusioncorp_demo
+```
 
-# Check Result
+---
+
+## Result
+
+A new branch named `xfusioncorp_demo` has been created from the `master` branch in the `/usr/src/kodekloudrepos/demo` Git repository. No code changes have been made.
