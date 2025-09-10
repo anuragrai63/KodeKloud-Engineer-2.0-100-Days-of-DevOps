@@ -1,17 +1,15 @@
-# Day 27: Git Revert Some Changes
+# Day 27: Git Revert – Undoing the Latest Commit
 
 ## Scenario
 
-The Nautilus application development team was working on a git repository /usr/src/kodekloudrepos/demo present on Storage server in Stratos DC. However, they reported an issue with the recent commits being pushed to this repo. They have asked the DevOps team to revert repo HEAD to last commit. Below are more details about the task:
+The Nautilus application development team encountered an issue with the most recent commit in the `/usr/src/kodekloudrepos/demo` Git repository on the Storage Server in Stratos DC. To resolve this, the latest commit needs to be reverted, restoring the repository to the state of the previous commit (which has the initial commit message).
 
+---
 
-In /usr/src/kodekloudrepos/demo git repository, revert the latest commit ( HEAD ) to the previous commit (JFYI the previous commit hash should be with initial commit message ).
+## Task
 
-
-Use revert demo message (please use all small letters for commit message) for the new revert commit.
-
-## Tasks
-
+- In the `/usr/src/kodekloudrepos/demo` repository, revert the latest commit (`HEAD`) to the previous commit.
+- Use the commit message: `revert demo` (all lowercase) for the new revert commit.
 
 ---
 
@@ -25,35 +23,35 @@ ssh natasha@ststor01
 
 ---
 
-### 2. Navigate to the repository directory:
+### 2. Navigate to the Repository Directory
 
 ```bash
 cd /usr/src/kodekloudrepos/demo
-
 ```
 
 ---
 
-### 3. Revert the latest commit (HEAD):
+### 3. Revert the Latest Commit (HEAD)
 
 ```bash
 git revert HEAD --no-edit
 git commit --amend -m "revert demo"
-
 ```
+
+- `git revert HEAD --no-edit`: Creates a new commit that undoes the changes from the latest commit.
+- `git commit --amend -m "revert demo"`: Amends the revert commit to use the required message.
 
 ---
 
-### 4. Verify the commit history:
+### 4. Verify the Commit History
 
 ```bash
 git log --oneline
-
 ```
 
 ---
 
-
-
 ## Result
 
+- The latest commit has been reverted.
+- A new commit with the message `revert demo` is now at the top of the commit history, restoring the repository to the previous state.
