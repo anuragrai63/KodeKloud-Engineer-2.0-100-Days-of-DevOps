@@ -1,15 +1,14 @@
-# Day 28: Git Cherry Pick
+# Day 28: Git Cherry-Pick
 
 ## Scenario
 
-The Nautilus application development team has been working on a project repository /opt/demo.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with the DevOps team:
+The Nautilus application development team is working on `/opt/demo.git`, which is cloned at `/usr/src/kodekloudrepos/demo` on the Storage Server in Stratos DC. There are two branches in this repository: `master` and `feature`. A developer is currently working on the `feature` branch, but needs to merge a specific commit from `feature` into `master` before the rest of their work is complete.
 
-
-
-There are two branches in this repository, master and feature. One of the developers is working on the feature branch and their work is still in progress, however they want to merge one of the commits from the feature branch to the master branch, the message for the commit that needs to be merged into master is Update info.txt. Accomplish this task for them, also remember to push your changes eventually.
+---
 
 ## Task
 
+- Cherry-pick a specific commit (with the message `Update info.txt`) from the `feature` branch and apply it to the `master` branch in `/usr/src/kodekloudrepos/demo`.
 
 ---
 
@@ -31,35 +30,48 @@ cd /usr/src/kodekloudrepos/demo
 
 ---
 
-### 3. Ensure you have the latest changes:
+### 3. Ensure You Have the Latest Changes
 
 ```bash
 git fetch --all
-
 ```
-
 
 ---
 
-### 4. Identify the commit hash from the feature branch:
+### 4. Identify the Commit Hash from the `feature` Branch
 
 ```bash
 git log feature
+```
 
+- Look for the commit with the message: `Update info.txt`.
+
+---
+
+### 5. Cherry-Pick the Commit into `master`
+
+First, check out the `master` branch:
+
+```bash
+git checkout master
+```
+
+Then, cherry-pick the desired commit (replace `<commit-hash>` with the actual hash):
+
+```bash
+git cherry-pick <commit-hash>
 ```
 
 ---
-5 Look for the commit with the message:
-Update info.txt
 
-6 Cherry-pick the commit into master:
-git cherry-pick <commit-hash>
+### 6. Push the Changes to the Remote `master` Branch
 
-
-7 Push the changes to the remote master branch:
+```bash
 git push origin master
+```
 
-
+---
 
 ## Result
 
+- The specific commit from the `feature` branch is now included in the `master` branch, without merging unrelated or incomplete work from the `feature` branch.
