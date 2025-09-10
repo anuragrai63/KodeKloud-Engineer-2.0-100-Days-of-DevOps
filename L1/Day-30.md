@@ -1,17 +1,17 @@
-# Day 30: Git hard reset
+# Day 30: Git Hard Reset – Clean Up Commit History
 
 ## Scenario
 
-The Nautilus application development team was working on a git repository /usr/src/kodekloudrepos/media present on Storage server in Stratos DC. This was just a test repository and one of the developers just pushed a couple of changes for testing, but now they want to clean this repository along with the commit history/work tree, so they want to point back the HEAD and the branch itself to a commit with message add data.txt file. Find below more details:
+The Nautilus application development team was working on a test Git repository at `/usr/src/kodekloudrepos/media` on the Storage Server in Stratos DC. The team needs to reset the commit history so that only two commits remain: the initial commit and the commit that adds `data.txt`.
 
-In /usr/src/kodekloudrepos/media git repository, reset the git commit history so that there are only two commits in the commit history i.e initial commit and add data.txt file.
-
-Also make sure to push your changes.
-
+---
 
 ## Task
 
-
+- In `/usr/src/kodekloudrepos/media`, reset the Git commit history to retain only two commits:  
+  1. Initial commit  
+  2. Commit adding `data.txt`
+- Force-push the cleaned history to the remote repository.
 
 ---
 
@@ -28,42 +28,53 @@ ssh natasha@ststor01
 ### 2. Navigate to the Repository Directory
 
 ```bash
-/usr/src/kodekloudrepos/media
+cd /usr/src/kodekloudrepos/media
 ```
 
 ---
 
-### 3. Identify the commit hash for "add data.txt file":
+### 3. Identify the Commit Hash for "add data.txt file"
 
 ```bash
 git log --oneline
-
 ```
-Look for the commit with the message add data.txt file and copy its hash
+
+- Look for the commit with the message `add data.txt file` and note its hash.
 
 ---
 
-### 4. Create a temporary branch from that commit:
+### 4. Create a Temporary Branch from That Commit
 
 ```bash
 git checkout -b clean-history <commit-hash>
+```
 
+- Replace `<commit-hash>` with the hash you found in the previous step.
+
+---
+
+### 5. Clean Up History Using Interactive Rebase
+
+```bash
+git rebase -i --root
+```
+
+- In the editor, **delete all lines except for the initial commit and the commit for `add data.txt file`**.
+- Save and exit the editor to complete the rebase.
+
+---
+
+### 6. Force Push the Cleaned History to the Remote
+
+```bash
+git checkout master
+git reset --hard clean-history
+git push origin master --force
 ```
 
 ---
 
-### 5. Reset the branch to that commit, keeping only the initial and target commit:
-git rebase -i --root
-
-Delete all lines except the initial commit and add data.txt file.
-
-Save and exit the editor.
-
-### 6. Force push the cleaned history to the remote:
-git checkout master
-git reset --hard clean-history
-git push origin master --force
-
-
 ## Result
 
+- The `master` branch now contains only two commits: the initial commit and the commit that adds `data.txt`.
+- The cleaned commit history is pushed to the remote repository, overwriting the previous history.
