@@ -1,18 +1,16 @@
-# Day 31: Git Stash
+# Day 31: Git Stash – Restoring and Committing Stashed Changes
 
 ## Scenario
 
-The Nautilus application development team was working on a git repository /usr/src/kodekloudrepos/media present on Storage server in Stratos DC. One of the developers stashed some in-progress changes in this repository, but now they want to restore some of the stashed changes. Find below more details to accomplish this task:
-
-
-
-Look for the stashed changes under /usr/src/kodekloudrepos/media git repository, and restore the stash with stash@{1} identifier. Further, commit and push your changes to the origin.
+The Nautilus application development team was working on the `/usr/src/kodekloudrepos/media` Git repository on the Storage Server in Stratos DC. One of the developers stashed some in-progress changes, and now these changes need to be restored, committed, and pushed to the remote repository.
 
 ---
 
 ## Task
 
-
+- Check for stashed changes in `/usr/src/kodekloudrepos/media`.
+- Restore the stash with the identifier `stash@{1}`.
+- Commit and push the restored changes to the remote repository (`origin`).
 
 ---
 
@@ -34,51 +32,52 @@ cd /usr/src/kodekloudrepos/media
 
 ---
 
-### 3. Check the stash list to confirm stash@{1} exists:
+### 3. Check the Stash List to Confirm `stash@{1}` Exists
 
 ```bash
 git stash list
-
 ```
 
-You should see something like:
-stash@{0}: WIP on main: ...
-stash@{1}: WIP on main: ...
+- You should see entries like:
+  ```
+  stash@{0}: WIP on main: ...
+  stash@{1}: WIP on main: ...
+  ```
 
 ---
 
-### 4. Apply the stash@{1}:
+### 4. Apply the `stash@{1}`
 
 ```bash
 git stash apply stash@{1}
-
 ```
-
 
 ---
 
-### 5. Stage the restored changes:
+### 5. Stage the Restored Changes
 
 ```bash
 git add .
-
 ```
 
 ---
 
-### 6. Commit the changes:
+### 6. Commit the Changes
 
 ```bash
 git commit -m "Restored stash@{1} changes"
-
 ```
 
 ---
 
-### 7. Push the commit to the origin:
+### 7. Push the Commit to the Origin
 
+```bash
 git push origin master
+```
 
+---
 
 ## Result
 
+- The changes from `stash@{1}` have been restored, committed, and pushed to the `master` branch on the remote repository.
