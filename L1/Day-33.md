@@ -2,20 +2,34 @@
 
 ## Scenario
 
-Sarah and Max were working on writting some stories which they have pushed to the repository. Max has recently added some new changes and is trying to push them to the repository but he is facing some issues. Below you can find more details:
+Sarah and Max are working on writing some stories which they have both pushed to the repository. Max has recently added new changes and is trying to push them to the repository, but he is facing some merge conflicts.
 
+You need to SSH into the storage server using the following credentials:
 
-SSH into storage server using user max and password Max_pass123. Under /home/max you will find the story-blog repository. Try to push the changes to the origin repo and fix the issues. The story-index.txt must have titles for all 4 stories. Additionally, there is a typo in The Lion and the Mooose line where Mooose should be Mouse.
+- **Username:** max  
+- **Password:** Max_pass123
 
+Once connected, navigate to the `/home/max/story-blog` repository. Try to push Max's changes to the origin repository and resolve any merge conflicts that occur, especially in the `story-index.txt` file.
 
-Click on the Gitea UI button on the top bar. You should be able to access the Gitea page. You can login to Gitea server from UI using username sarah and password Sarah_pass123 or username max and password Max_pass123.
+Additionally, you can use the Gitea UI to verify and manage repository changes:
 
+- Click on the **Gitea UI** button on the top bar.
+- Login to the Gitea server using:
+  - **Username:** sarah / **Password:** Sarah_pass123  
+  - **or**
+  - **Username:** max / **Password:** Max_pass123
 
-Note: For these kind of scenarios requiring changes to be done in a web UI, please take screenshots so that you can share it with us for review in case your task is marked incomplete. You may also consider using a screen recording software such as loom.com to record and share your work.
+**Note:** For scenarios requiring changes in a web UI, please take screenshots as proof of your work in case your task is marked incomplete. You may also contact the support team if you face any issues.
+
 ---
 
 ## Task
 
+1. SSH into the storage server as user `max`.
+2. Navigate to the `story-blog` repository.
+3. Attempt to push changes to the origin repository.
+4. Resolve any Git merge conflicts that arise.
+5. Verify the changes using the Gitea web UI.
 
 ---
 
@@ -32,12 +46,12 @@ ssh max@ststor01
 ### 2. Navigate to the Repository Directory
 
 ```bash
-/home/max/story-blog
+cd /home/max/story-blog
 ```
 
 ---
 
-### 3. Check remote 
+### 3. Check the Remote Repository
 
 ```bash
 git remote -v
@@ -45,41 +59,56 @@ git remote -v
 
 ---
 
-### 4. Pull latest remote
+### 4. Pull the Latest Changes from Remote
 
 ```bash
 git pull
 ```
 
+If you encounter merge conflicts, proceed to the next step.
+
 ---
 
-### 5.Correct the file
+### 5. Resolve Merge Conflicts in `story-index.txt`
+
+Open the conflicting file in an editor:
 
 ```bash
 vi story-index.txt
 ```
-You need to manually edit the file to remove the conflict markers (<<<<<<<, =======, >>>>>>>) and keep the correct content. Here's the cleaned-up version:
 
+Manually edit the file to remove the conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`) and keep the correct content.  
+**Example cleaned-up content:**
+
+```
 The Lion and the Mouse
 The Fox and the Grapes
 The Tortoise and the Hare
 The Ant and the Grasshopper
+```
 
+Save and exit the editor.
 
 ---
 
-### 6. Push now
+### 6. Add, Commit, and Push the Changes
 
 ```bash
 git add .
-git commit -m "updated"
-git push 
+git commit -m "Resolved merge conflict in story-index.txt"
+git push
 ```
 
 ---
 
-### Login to Git UI verify chnages.
+### 7. Login to Gitea UI and Verify Changes
 
+- Access the Gitea UI.
+- Login as `sarah` or `max`.
+- Verify that the latest changes have been pushed and merged.
+
+---
 
 ## Result
 
+You have successfully resolved the Git merge conflict, pushed the changes, and verified them via the Gitea web UI.
