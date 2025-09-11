@@ -2,19 +2,16 @@
 
 ## Scenario
 
-The Nautilus application development team has been working on a project repository /opt/media.git. This repo is cloned at /usr/src/kodekloudrepos on storage server in Stratos DC. They recently shared the following requirements with DevOps team:
+The Nautilus application development team has been working on a project repository at `/opt/media.git`. This repository is cloned at `/usr/src/kodekloudrepos/media` on the Storage Server in Stratos DC. While a developer was working on the `feature` branch, some new commits were pushed to the `master` branch. The developer now wants to rebase the `feature` branch onto the latest `master` to incorporate the new changes.
 
+After rebasing, make sure to push the updated `feature` branch to the remote repository.
 
-
-One of the developers is working on feature branch and their work is still in progress, however there are some changes which have been pushed into the master branch, the developer now wants to rebase the feature branch with the master branch without loosing any data from the feature branch, also they don't want to add any merge commit by simply merging the master branch into the feature branch. Accomplish this task as per requirements mentioned.
-
-
-Also remember to push your changes once done.
 ---
 
 ## Task
 
-
+- Rebase the `feature` branch in `/usr/src/kodekloudrepos/media` onto the latest `master` branch.
+- Push the rebased `feature` branch to the remote repository.
 
 ---
 
@@ -36,16 +33,15 @@ cd /usr/src/kodekloudrepos/media
 
 ---
 
-### 3. Check the current branch and list all branches:
+### 3. Check the Current Branch and List All Branches
 
 ```bash
 git branch
-
 ```
 
 ---
 
-### 4. Switch to the feature branch:
+### 4. Switch to the `feature` Branch
 
 ```bash
 git checkout feature
@@ -53,27 +49,23 @@ git checkout feature
 
 ---
 
-### 5. Rebase the feature branch with master:
+### 5. Rebase the `feature` Branch Onto `master`
 
 ```bash
 git fetch origin
 git rebase origin/master
-
 ```
 
 ---
 
-### 6. Push the rebased feature branch to origin:
+### 6. Push the Rebases `feature` Branch to the Remote
 
 ```bash
 git push origin feature --force
-
 ```
 
 ---
 
-
 ## Result
 
-
-
+- The `feature` branch is now rebased onto the latest `master` branch and pushed to the remote repository, ensuring it is up-to-date with recent changes from `master`.
