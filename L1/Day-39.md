@@ -2,15 +2,15 @@
 
 ## Scenario
 
-One of the Nautilus developer was working to test new changes on a container. He wants to keep a backup of his changes to the container. A new request has been raised for the DevOps team to create a new image from this container. Below are more details about it:
+A Nautilus developer has been testing new changes inside a running container. To preserve these changes, the DevOps team has been asked to create a new Docker image as a backup.
 
-
-a. Create an image blog:datacenter on Application Server 2 from a container ubuntu_latest that is running on same server.
+- Create an image called `blog:datacenter` on **Application Server 2** from the running container `ubuntu_latest` on the same server.
 
 ---
 
 ## Task
 
+- Create a Docker image named `blog:datacenter` from the `ubuntu_latest` container.
 
 ---
 
@@ -24,7 +24,7 @@ ssh steve@stapp02
 
 ---
 
-### 2. Ensure the container ubuntu_latest is running:
+### 2. Ensure the `ubuntu_latest` Container is Running
 
 ```bash
 docker ps -f name=ubuntu_latest
@@ -32,24 +32,22 @@ docker ps -f name=ubuntu_latest
 
 ---
 
-### 3. Commit the container to a new image:
-
+### 3. Commit the Container to a New Image
 
 ```bash
 docker commit ubuntu_latest blog:datacenter
-
 ```
 
 ---
 
-### 4. Verify the Images
+### 4. Verify the New Image
 
 ```bash
 docker images | grep blog
-
 ```
 
 ---
 
 ## Result
 
+- The `blog:datacenter` image is successfully created from the `ubuntu_latest` container.
