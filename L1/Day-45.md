@@ -2,25 +2,22 @@
 
 ## Scenario
 
-The Nautilus DevOps team is working to create new images per requirements shared by the development team. One of the team members is working to create a Dockerfile on App Server 3 in Stratos DC. While working on it she ran into issues in which the docker build is failing and displaying errors. Look into the issue and fix it to build an image as per details mentioned below:
+The Nautilus DevOps team is working to create new Docker images as per requirements from the development team. One of the team members is creating a Dockerfile on **App Server 3** in Stratos DC. However, the Dockerfile has issues and is not able to build the image successfully.
 
+Your tasks:
 
-a. The Dockerfile is placed on App Server 3 under /opt/docker directory.
+- The Dockerfile is located on App Server 3 under `/opt/docker`.
+- Fix issues with the Dockerfile so that it can successfully build the image.
+- **Do not** change the base image, any other valid configuration within the Dockerfile, or any data being used (e.g., `index.html`).
 
-
-b. Fix the issues with this file and make sure it is able to build the image.
-
-
-c. Do not change base image, any other valid configuration within Dockerfile, or any of the data been used — for example, index.html.
-
-
-Note: Please note that once you click on FINISH button all existing images, the containers will be destroyed and new image will be built from your Dockerfile.the host's `/opt/security` directory (do not modify any data within these locations).
+> **Note:** Once the task is finished, all existing images and containers will be destroyed, and a new image will be built from your corrected Dockerfile.
 
 ---
 
 ## Task
 
-
+- Review and fix the Dockerfile in `/opt/docker` on App Server 3.
+- Ensure the image builds successfully without altering the base image or existing data/configurations.
 
 ---
 
@@ -34,10 +31,11 @@ ssh banner@stapp03
 
 ---
 
-### 2. Correct Dockerfile 
+### 2. Correct the Dockerfile
 
-Create `/opt/docker/Dockerfile` with the following content:
+Update or create `/opt/docker/Dockerfile` with the following content:
 
+```dockerfile
 FROM httpd:2.4.43
 RUN sed -i "s/Listen 80/Listen 8080/g" /usr/local/apache2/conf/httpd.conf
 RUN sed -i '/LoadModule ssl_module modules\/mod_ssl.so/s/^#//g' /usr/local/apache2/conf/httpd.conf \
@@ -48,19 +46,19 @@ COPY certs/server.crt /usr/local/apache2/conf/server.crt
 COPY certs/server.key /usr/local/apache2/conf/server.key
 
 COPY html/index.html /usr/local/apache2/htdocs/
-
+```
 
 ---
 
-### 3. Once saved corrrect file run below
+### 3. Build the Docker Image
 
 ```bash
 cd /opt/docker
 sudo docker build -t nautilus-secure-httpd .
-
 ```
 
 ---
 
 ## Result
 
+- The Dockerfile is fixed and the image `nautilus-secure-httpd` builds successfully.
