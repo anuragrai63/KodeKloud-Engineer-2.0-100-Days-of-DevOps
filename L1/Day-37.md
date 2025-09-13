@@ -2,12 +2,15 @@
 
 ## Scenario
 
-The Nautilus DevOps team possesses confidential data on App Server 1 in the Stratos Datacenter. A container named ubuntu_latest is running on the same server.
+The Nautilus DevOps team possesses confidential data on **App Server 1** in the Stratos Datacenter. A container named `ubuntu_latest` is running on the same server.
 
-Copy an encrypted file /tmp/nautilus.txt.gpg from the docker host to the ubuntu_latest container located at /tmp/. Ensure the file is not modified during this operatio
+You need to copy an encrypted file `/tmp/nautilus.txt.gpg` from the Docker host to the `ubuntu_latest` container, placing it at `/tmp/` inside the container. Ensure the file is not modified during this operation.
+
+---
 
 ## Task
 
+- Copy `/tmp/nautilus.txt.gpg` from the Docker host into the `/tmp/` directory of the `ubuntu_latest` container, preserving its contents.
 
 ---
 
@@ -21,7 +24,7 @@ ssh tony@stapp01
 
 ---
 
-### 2. Check Container Status 
+### 2. Check Container Status
 
 ```bash
 docker ps -a
@@ -29,19 +32,22 @@ docker ps -a
 
 ---
 
-### 3. Copy file from machine to Container
+### 3. Copy the File from Host to Container
 
 ```bash
-docker cp /tmp/nautilus.txt.gpg  ubuntu_latest:/tmp/
+docker cp /tmp/nautilus.txt.gpg ubuntu_latest:/tmp/
 ```
 
-### 3. verify file
+---
+
+### 4. Verify the File Inside the Container
 
 ```bash
-docker exec -i -t  ubuntu_latest ls -l "/tmp"
+docker exec -it ubuntu_latest ls -l "/tmp"
 ```
 
 ---
 
 ## Result
 
+- The file `/tmp/nautilus.txt.gpg` has been successfully copied to the `/tmp/` directory inside the `ubuntu_latest` container without modification.
