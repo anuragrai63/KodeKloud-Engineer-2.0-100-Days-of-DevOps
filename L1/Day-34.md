@@ -1,22 +1,23 @@
-# Day 34: 
+# Day 34 Git Hook
 
 ## Scenario
 
-The Nautilus application development team was working on a git repository /opt/official.git which is cloned under /usr/src/kodekloudrepos directory present on Storage server in Stratos DC. The team want to setup a hook on this repository, please find below more details:
+The Nautilus application development team was working on a Git repository located at `/opt/official.git`, which is cloned under `/usr/src/kodekloudrepos` directory on the Storage server in Stratos DC. The team was tasked to merge a feature branch into the `master` branch, but **before pushing the changes**, you must complete the following:
 
+> **Create a `post-update` hook in this Git repository so that whenever any changes are pushed to the `master` branch, it creates a release tag named `release-YYYY-MM-DD`, where `YYYY-MM-DD` is the current date. If a tag with the same name already exists, do not create it again.**
 
+**Finally, remember to push your changes.**
 
-Merge the feature branch into the master branch`, but before pushing your changes complete below point.
-
-Create a post-update hook in this git repository so that whenever any changes are pushed to the master branch, it creates a release tag with name release-2023-06-15, where 2023-06-15 is supposed to be the current date. For example if today is 20th June, 2023 then the release tag must be release-2023-06-20. Make sure you test the hook at least once and create a release tag for today's release.
-
-Finally remember to push your changes.
-Note: Perform this task using the natasha user, and ensure the repository or existing directory permissions are not altered.
+> **Note:** Perform this task using the `natasha` user, and ensure the repository or existing directory permissions are not altered.
 
 ---
 
 ## Task
 
+- Merge the `feature` branch into the `master` branch.
+- Set up a `post-update` Git hook to create a dated release tag on every push to `master`.
+- Push your changes.
+- Ensure everything is done as the `natasha` user, without altering permissions.
 
 ---
 
@@ -30,61 +31,72 @@ ssh natasha@ststor01
 
 ---
 
-### 2. Merging the Branches
+### 2. Merge the Branches
 
 ```bash
 cd /usr/src/kodekloudrepos/official
-sudo git checkout master
-sudo git merge feature
+git checkout master
+git merge feature
 ```
 
 ---
 
-### 3. Creating the post-update Hook
+### 3. Create the `post-update` Hook
 
 ```bash
 cd /opt/official.git/hooks
-sudo vi post-update
+vi post-update
 ```
-Add Script Content
 
+**Add the following content to `post-update`:**
+
+```sh
 #!/bin/sh
-DATE=$(date +%Y-%m-%d)
-TAG_NAME="release-$DATE"
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-if ! git tag -l | grep -q "$TAG_NAME"; then
-  git tag "$TAG_NAME"
-  echo "Created tag: $TAG_NAME"
-else
-  echo "Tag $TAG_NAME already exists. Skipping..."
+if [ "$BRANCH" = "master" ]; then
+  DATE=$(date +%Y-%m-%d)
+  TAG_NAME="release-$DATE"
+
+  if ! git tag -l | grep -q "$TAG_NAME"; then
+    git tag "$TAG_NAME"
+    echo "Created tag: $TAG_NAME"
+  else
+    echo "Tag $TAG_NAME already exists. Skipping..."
+  fi
 fi
-
----
-
-### 4. Make the script executable and set ownership:
-
-```bash
-sudo chmod +x post-update
-sudo chown natasha:natasha post-update
 ```
 
+---
+
+### 4. Make the Hook Executable
+
+```bash
+chmod +x post-update
+chown natasha:natasha post-update
+```
 
 ---
 
-### 5. Pushing Changes and Verifying the Hook
+### 5. Push Changes and Verify the Hook
 
+```bash
 cd /usr/src/kodekloudrepos/official
-sudo git push origin master
-
-
-### 6. Confirm the tag's existence:
-
-```bash
-sudo git ls-remote --tags origin
+git push origin master
 ```
 
 ---
 
+### 6. Confirm the Tag's Existence
+
+```bash
+git ls-remote --tags origin
+```
+
+---
 
 ## Result
 
+- The `feature` branch is merged into `master`.
+- On each push to `master`, a tag named `release-YYYY-MM-DD` is created (if it does not already exist).
+- All actions are performed as the `natasha` user, with permissions preserved.
