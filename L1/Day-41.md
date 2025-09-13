@@ -1,18 +1,19 @@
-# Day 41: Write a Docker File
+# Day 41: Write a Dockerfile
 
 ## Scenario
 
-As per recent requirements shared by the Nautilus application development team, they need custom images created for one of their projects. Several of the initial testing requirements are already been shared with DevOps team. Therefore, create a docker file /opt/docker/Dockerfile (please keep D capital of Dockerfile) on App server 2 in Stratos DC and configure to build an image with the following requirements:
+The Nautilus application development team requires custom Docker images for their project. Some initial testing requirements have already been defined:
 
-a. Use ubuntu:24.04 as the base image.
-
-b. Install apache2 and configure it to work on 8085 port. (do not update any other Apache configuration settings like document root etc).
+- Use `ubuntu:24.04` as the base image.
+- Install Apache2 and configure it to listen on port `8085` (do not modify other Apache configuration settings such as the document root).
 
 ---
 
 ## Task
 
-
+- Create a Dockerfile that uses `ubuntu:24.04` as the base image.
+- Install Apache2 and configure it to listen on port `8085`.
+- Build the Docker image and verify its presence.
 
 ---
 
@@ -26,13 +27,15 @@ ssh steve@stapp02
 
 ---
 
-### 2. Create Dockerfile with below content
+### 2. Create the Dockerfile
 
 ```bash
 vi /opt/docker/Dockerfile
 ```
-content:
 
+**Dockerfile content:**
+
+```dockerfile
 FROM ubuntu:24.04
 RUN apt update && \
     apt install apache2 -y && \
@@ -40,10 +43,11 @@ RUN apt update && \
     sed -i 's/<VirtualHost \*:80>/<VirtualHost *:8085>/' /etc/apache2/sites-available/000-default.conf
 EXPOSE 8085
 CMD ["apachectl", "-D", "FOREGROUND"]
+```
 
 ---
 
-### 3. Build the image:
+### 3. Build the Image
 
 ```bash
 cd /opt/docker
@@ -52,13 +56,14 @@ docker build -t custom_apache:8085 .
 
 ---
 
-### 4. Verify image
+### 4. Verify the Image
 
 ```bash
-docker image
+docker images
 ```
 
 ---
 
 ## Result
 
+- A custom Docker image named `custom_apache:8085` is created using Ubuntu 24.04 and Apache2 configured to listen on port 8085.
