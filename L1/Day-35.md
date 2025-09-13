@@ -1,24 +1,24 @@
-# Day 35 Docker Install
+# Day 35: Docker Install
 
 ## Scenario
 
-The Nautilus DevOps team aims to containerize various applications following a recent meeting with the application development team. They intend to conduct testing with the following steps:
+The Nautilus DevOps team is planning to containerize several applications after a recent discussion with the application development team. To begin their testing, they need to:
 
-Install docker-ce and docker compose packages on App Server 2.
-
-Initiate the docker service.
+- Install `docker-ce` and Docker Compose packages on **App Server 2**.
+- Initiate (start and enable) the Docker service.
 
 ---
 
 ## Task
 
-
+- Install Docker Community Edition (docker-ce) and Docker Compose on App Server 2.
+- Start and enable the Docker service.
 
 ---
 
 ## Solution
 
-### 1. SSH into the Storage Server
+### 1. SSH into App Server 2
 
 ```bash
 ssh steve@stapp02
@@ -26,13 +26,12 @@ ssh steve@stapp02
 
 ---
 
-### 2. Install Docker CE & Compose
+### 2. Install Docker CE and Docker Compose
 
 ```bash
 sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 sudo yum install docker-ce docker-ce-cli containerd.io docker-compose -y
-
 ```
 
 ---
@@ -42,9 +41,11 @@ sudo yum install docker-ce docker-ce-cli containerd.io docker-compose -y
 ```bash
 sudo systemctl start docker
 sudo systemctl enable docker
-
 ```
 
+---
 
 ## Result
 
+- Docker CE and Docker Compose are successfully installed.
+- Docker service is running and enabled to start on boot.
