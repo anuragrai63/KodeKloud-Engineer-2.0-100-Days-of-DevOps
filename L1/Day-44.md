@@ -56,4 +56,4 @@ docker compose up -d
 
 ## Result
 
-- The `httpd` container is running, serving static content on host port 8085, with the website files mapped from `/opt/security` on the host.
+- The `app' is running, serving static content on host port 5002.
