@@ -2,18 +2,17 @@
 
 ## Scenario
 
-The Nautilus DevOps team needs to set up several docker environments for different applications. One of the team members has been assigned a ticket where he has been asked to create some docker networks to be used later. Complete the task based on the following ticket description:
+The Nautilus DevOps team needs to set up several Docker environments for different applications. One team member has been assigned a ticket to create a specific Docker network with the following requirements:
 
-a. Create a docker network named as ecommerce on App Server 3 in Stratos DC.
-
-b. Configure it to use macvlan drivers.
-
-c. Set it to use subnet 172.28.0.0/24 and iprange 172.28.0.0/24.
+- Create a Docker network named `ecommerce` on **App Server 3** in Stratos DC.
+- Configure the network to use the **macvlan** driver.
+- Set the network to use subnet `172.28.0.0/24` and IP range `172.28.0.0/24`.
 
 ---
 
 ## Task
 
+- Create a Docker network called `ecommerce` using the macvlan driver, with the specified subnet and IP range.
 
 ---
 
@@ -27,7 +26,7 @@ ssh banner@stapp03
 
 ---
 
-### 2. Create the macvlan network:
+### 2. Create the Macvlan Network
 
 ```bash
 docker network create \
@@ -37,10 +36,9 @@ docker network create \
   --gateway=172.28.0.1 \
   -o parent=eth0 \
   ecommerce
-
 ```
 
-
+> **Note:** Replace `eth0` with the actual network interface if it differs on your server.
 
 ---
 
@@ -48,12 +46,10 @@ docker network create \
 
 ```bash
 docker network inspect ecommerce
-
 ```
 
 ---
 
-
-
 ## Result
 
+- The `ecommerce` Docker network is successfully created with the macvlan driver, subnet `172.28.0.0/24`, and IP range `172.28.0.0/24` on App Server 3.
