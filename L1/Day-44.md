@@ -56,4 +56,4 @@ docker compose up -d
 
 ## Result
 
-- The `app' is running, serving static content on host port 5002.
+- The `app' is running, serving static content on host port.
