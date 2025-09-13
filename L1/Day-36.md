@@ -2,17 +2,16 @@
 
 ## Scenario
 
-The Nautilus DevOps team is planning to containerize several applications after a recent discussion with the application development team. To begin their testing, they need to:
+The Nautilus DevOps team is planning to containerize several applications following a discussion with the application development team. As part of their initial testing, they are required to:
 
-- Install `docker-ce` and Docker Compose packages on **App Server 2**.
-- Initiate (start and enable) the Docker service.
+- Deploy an **nginx** container on **App Server 2**.
 
 ---
 
 ## Task
 
-- Install Docker Community Edition (docker-ce) and Docker Compose on App Server 2.
-- Start and enable the Docker service.
+- Pull the `nginx:alpine` Docker image.
+- Run a container named `nginx_2` using this image in detached mode.
 
 ---
 
@@ -26,23 +25,22 @@ ssh steve@stapp02
 
 ---
 
-### 2. Pull the nginx:alpine image
+### 2. Pull the nginx:alpine Image
 
 ```bash
 docker pull nginx:alpine
-
 ```
 
 ---
 
-### 3. Create and run the container:
+### 3. Create and Run the Container
 
 ```bash
 docker run -d --name nginx_2 nginx:alpine
-
 ```
 
 ---
 
 ## Result
 
+- The `nginx_2` container is running on App Server 2 using the `nginx:alpine` image.
