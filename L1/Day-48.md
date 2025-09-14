@@ -35,7 +35,7 @@ spec:
 
 ```
 
-### 2.Apply it using
+### 2. Apply it using
 
 ```bash
 kubectl apply -f pod-httpd.yaml
