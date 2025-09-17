@@ -46,7 +46,7 @@ spec:
 
 ### 2. PersistentVolumeClaim (pvc-devops.yaml)
 
-```bash
+```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
