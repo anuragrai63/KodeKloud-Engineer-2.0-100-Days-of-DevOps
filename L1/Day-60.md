@@ -70,6 +70,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: pod-devops
+  labels:
+    app: devops
 spec:
   containers:
   - name: container-devops
