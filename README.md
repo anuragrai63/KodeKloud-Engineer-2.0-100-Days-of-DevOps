@@ -15,26 +15,26 @@ Each day covers a practical, hands-on DevOps task across Linux, Git, Docker, Kub
 ## 📅 Challenge Index
 
 ### 🔹 Linux Fundamentals
-- Day 1: Linux User Setup with Non-Interactive Shell (2025-07-25)  
-- Day 2: Temporary User Setup with Expiry (2025-07-26)  
-- Day 3: Secure Root SSH Access (2025-07-27)  
-- Day 4: Script Execution Permissions (2025-07-29)  
-- Day 5: SELinux Installation and Configuration (2025-07-29)  
-- Day 6: Create a Cron Job (2025-07-31)  
-- Day 7: Linux SSH Authentication (2025-08-02)  
-- Day 10: Linux Bash Scripts (2025-08-02)  
-- Day 12: Linux Network Services (2025-08-08)  
-- Day 14: Linux Process Troubleshooting (2025-08-17)  
+- Day 1: Linux User Setup with Non-Interactive Shell  
+- Day 2: Temporary User Setup with Expiry  
+- Day 3: Secure Root SSH Access   
+- Day 4: Script Execution Permissions 
+- Day 5: SELinux Installation and Configuration  
+- Day 6: Create a Cron Job   
+- Day 7: Linux SSH Authentication 
+- Day 10: Linux Bash Scripts   
+- Day 12: Linux Network Services  
+- Day 14: Linux Process Troubleshooting   
 
 ### 🔹 Databases & Web Servers
-- Day 9: MariaDB Troubleshooting (2025-08-02)  
-- Day 11: Install and Configure Tomcat Server (2025-08-03)  
-- Day 15: Setup SSL for Nginx (2025-08-17)  
-- Day 16: Install and Configure Nginx as LBR (2025-08-17)  
-- Day 17: Install and Configure PostgreSQL (2025-08-17)  
-- Day 18: Configure LAMP Server (2025-09-07)  
-- Day 19: Install and Configure Web Application (2025-09-07)  
-- Day 20: Configure Nginx + PHP-FPM Using Unix Sock (2025-09-07)  
+- Day 9: MariaDB Troubleshooting   
+- Day 11: Install and Configure Tomcat Server  
+- Day 15: Setup SSL for Nginx   
+- Day 16: Install and Configure Nginx as LBR  
+- Day 17: Install and Configure PostgreSQL  
+- Day 18: Configure LAMP Server   
+- Day 19: Install and Configure Web Application 
+- Day 20: Configure Nginx + PHP-FPM Using Unix Sock  
 
 ### 🔹 Git & Version Control
 - Day 21–34: Git Basics (Repo setup, clone, fork, branches, merges, remotes, revert, cherry-pick, PRs, reset, stash, rebase, conflicts, hooks)  
