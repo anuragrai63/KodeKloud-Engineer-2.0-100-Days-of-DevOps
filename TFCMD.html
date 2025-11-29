@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terraform Ultimate Cheat Sheet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Updated Libraries: Switched to unpkg for better reliability and added crossorigin -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" crossorigin="anonymous"></script>
+    
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        
+        /* Animated Background */
+        .bg-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            background-size: 200% 200%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #4f46e5; animation: float 10s infinite ease-in-out; }
+        .orb-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: #7c3aed; animation: float 12s infinite ease-in-out reverse; }
+        .orb-3 { top: 40%; left: 40%; width: 30vw; height: 30vw; background: #db2777; animation: float 15s infinite ease-in-out; opacity: 0.2; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 50px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Command Styling */
+        .command-row {
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        .command-row:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        .command-row:active {
+            transform: scale(0.99);
+        }
+        .copy-tooltip {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: #4ade80;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .command-row:hover .copy-tooltip {
+            opacity: 1;
+        }
+
+        /* Masonry Grid */
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 1.5rem;
+        }
+        @media (min-width: 768px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1280px) { .masonry-grid { column-count: 3; } }
+        .break-inside-avoid { break-inside: avoid; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+        /* Syntax Highlighting Sim */
+        .cmd-base { color: #c084fc; font-weight: 600; }
+        .cmd-arg { color: #f472b6; }
+        .cmd-val { color: #94a3b8; }
+        
+        .lifecycle-arrow {
+            position: relative;
+        }
+        .lifecycle-arrow::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0; 
+            height: 0; 
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-left: 8px solid rgba(255,255,255,0.2);
+        }
+        @media (max-width: 768px) {
+            .lifecycle-arrow::after {
+                right: 50%;
+                top: auto;
+                bottom: -20px;
+                transform: translateX(50%) rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="bg-mesh"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Header Section -->
+    <header class="max-w-7xl mx-auto mb-12 text-center relative z-10">
+        <div class="inline-flex items-center justify-center p-1 rounded-full glass-card mb-6 animate-pulse">
+            <span class="px-3 py-1 text-xs font-semibold text-indigo-300 uppercase tracking-wider">Cheat Sheet v2.1</span>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-indigo-300 mb-4 tracking-tight drop-shadow-sm">Terraform CLI</h1>
+        <p class="text-indigo-200/70 text-lg md:text-xl max-w-2xl mx-auto font-light">The essential command reference for Infrastructure as Code.</p>
+        
+        <!-- Lifecycle Visualization -->
+        <div class="mt-10 max-w-4xl mx-auto glass-card rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+            <div class="flex flex-col items-center group cursor-default lifecycle-arrow w-full md:w-auto">
+                <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-2 group-hover:bg-blue-500/40 transition-colors border border-blue-500/30">
+                    <i data-lucide="play" class="w-6 h-6 text-blue-400"></i>
+                </div>
+                <span class="text-sm font-bold text-blue-300">INIT</span>
+                <span class="text-xs text-slate-400">Setup</span>
+            </div>
+            
+            <div class="flex flex-col items-center group cursor-default lifecycle-arrow w-full md:w-auto">
+                <div class="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-2 group-hover:bg-yellow-500/40 transition-colors border border-yellow-500/30">
+                    <i data-lucide="file-search" class="w-6 h-6 text-yellow-400"></i>
+                </div>
+                <span class="text-sm font-bold text-yellow-300">PLAN</span>
+                <span class="text-xs text-slate-400">Preview</span>
+            </div>
+
+            <div class="flex flex-col items-center group cursor-default lifecycle-arrow w-full md:w-auto">
+                <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mb-2 group-hover:bg-green-500/40 transition-colors border border-green-500/30">
+                    <i data-lucide="zap" class="w-6 h-6 text-green-400"></i>
+                </div>
+                <span class="text-sm font-bold text-green-300">APPLY</span>
+                <span class="text-xs text-slate-400">Deploy</span>
+            </div>
+
+            <div class="flex flex-col items-center group cursor-default w-full md:w-auto">
+                <div class="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center mb-2 group-hover:bg-red-500/40 transition-colors border border-red-500/30">
+                    <i data-lucide="trash-2" class="w-6 h-6 text-red-400"></i>
+                </div>
+                <span class="text-sm font-bold text-red-300">DESTROY</span>
+                <span class="text-xs text-slate-400">Teardown</span>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mt-8 max-w-xl mx-auto relative group z-20">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i data-lucide="search" class="w-5 h-5 text-indigo-400/70"></i>
+            </div>
+            <input type="text" id="searchInput" placeholder="Find a command (e.g. 'state', 'force', 'json')..." 
+                class="block w-full pl-12 pr-4 py-4 rounded-xl bg-slate-900/60 border border-slate-700/50 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-slate-900/80 backdrop-blur-sm transition-all shadow-2xl">
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto masonry-grid relative z-10 pb-20" id="cardContainer">
+        
+        <!-- 1. Initialization -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-blue-500/20 rounded-lg mr-4 border border-blue-500/20">
+                        <i data-lucide="package" class="w-5 h-5 text-blue-300"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Initialization</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Start Here</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform init', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">init</span></div>
+                        <p class="text-sm text-slate-400">Initialize directory, download plugins.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform init -upgrade', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">init</span> <span class="cmd-arg">-upgrade</span></div>
+                        <p class="text-sm text-slate-400">Upgrade providers to newest allowed versions.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform init -reconfigure', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">init</span> <span class="cmd-arg">-reconfigure</span></div>
+                        <p class="text-sm text-slate-400">Reconfigure backend (ignore saved config).</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform init -backend-config=\'conf.hcl\'', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">init</span> <span class="cmd-arg">-backend-config</span>=<span class="cmd-val">...</span></div>
+                        <p class="text-sm text-slate-400">Load backend configuration from file.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Planning -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-yellow-500/20 rounded-lg mr-4 border border-yellow-500/20">
+                        <i data-lucide="map" class="w-5 h-5 text-yellow-300"></i>
+                    </div>
+                     <div>
+                        <h2 class="text-xl font-bold text-white">Planning</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Dry Run</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform plan', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">plan</span></div>
+                        <p class="text-sm text-slate-400">Show changes required by current config.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform plan -out=tfplan', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">plan</span> <span class="cmd-arg">-out</span>=<span class="cmd-val">tfplan</span></div>
+                        <p class="text-sm text-slate-400">Save the plan to a file for safety.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform plan -target=aws_instance.app', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">plan</span> <span class="cmd-arg">-target</span>=<span class="cmd-val">resource</span></div>
+                        <p class="text-sm text-slate-400">Plan only for a specific resource.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform plan -refresh-only', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">plan</span> <span class="cmd-arg">-refresh-only</span></div>
+                        <p class="text-sm text-slate-400">Check for drift without changing resources.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Execution -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-green-500/20 rounded-lg mr-4 border border-green-500/20">
+                        <i data-lucide="play-circle" class="w-5 h-5 text-green-300"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Execution</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Make it Real</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform apply', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">apply</span></div>
+                        <p class="text-sm text-slate-400">Create or update infrastructure.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform apply -auto-approve', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">apply</span> <span class="cmd-arg">-auto-approve</span></div>
+                        <p class="text-sm text-slate-400">Apply without asking for "yes".</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform apply tfplan', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">apply</span> <span class="cmd-val">tfplan</span></div>
+                        <p class="text-sm text-slate-400">Apply a saved plan file exactly.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform apply -replace=\'aws_instance.web\'', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">apply</span> <span class="cmd-arg">-replace</span>=<span class="cmd-val">"res"</span></div>
+                        <p class="text-sm text-slate-400">Force destroy and recreate a resource.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Destruction -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-red-500/20 rounded-lg mr-4 border border-red-500/20">
+                        <i data-lucide="bomb" class="w-5 h-5 text-red-300"></i>
+                    </div>
+                     <div>
+                        <h2 class="text-xl font-bold text-white">Destruction</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Clean Up</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform destroy', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base text-red-300">terraform</span> <span class="cmd-arg text-red-400">destroy</span></div>
+                        <p class="text-sm text-slate-400">Destroy ALL infrastructure.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform destroy -target=resource', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base text-red-300">terraform</span> <span class="cmd-arg text-red-400">destroy</span> <span class="cmd-arg">-target</span>=<span class="cmd-val">res</span></div>
+                        <p class="text-sm text-slate-400">Destroy only specific resources.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. State Management -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-purple-500/20 rounded-lg mr-4 border border-purple-500/20">
+                        <i data-lucide="database" class="w-5 h-5 text-purple-300"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">State Management</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Backend Control</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform state list', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">state list</span></div>
+                        <p class="text-sm text-slate-400">List all resources tracked in state.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform state show resource_name', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">state show</span> <span class="cmd-val">&lt;name&gt;</span></div>
+                        <p class="text-sm text-slate-400">Show details of a resource in state.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform state mv old_name new_name', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">state mv</span> <span class="cmd-val">old new</span></div>
+                        <p class="text-sm text-slate-400">Rename resource without destroying it.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform state rm resource_name', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">state rm</span> <span class="cmd-val">&lt;name&gt;</span></div>
+                        <p class="text-sm text-slate-400">Stop tracking resource (no destroy).</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform state pull > state.tfstate', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">state pull</span> > <span class="cmd-val">file</span></div>
+                        <p class="text-sm text-slate-400">Download remote state locally.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                     <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform state push state.tfstate', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">state push</span> <span class="cmd-val">file</span></div>
+                        <p class="text-sm text-slate-400">Upload local state file to remote.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 6. Modules & Providers (NEW) -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-indigo-500/20 rounded-lg mr-4 border border-indigo-500/20">
+                        <i data-lucide="download-cloud" class="w-5 h-5 text-indigo-300"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Modules & Providers</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Dependencies</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform get', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">get</span></div>
+                        <p class="text-sm text-slate-400">Download and install modules.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform providers', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">providers</span></div>
+                        <p class="text-sm text-slate-400">List providers in current configuration.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                     <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform login', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">login</span></div>
+                        <p class="text-sm text-slate-400">Save API token for Terraform Cloud/Ent.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform init -migrate-state', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">init</span> <span class="cmd-arg">-migrate-state</span></div>
+                        <p class="text-sm text-slate-400">Migrate state to new backend.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. Outputs & Data (NEW) -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-teal-500/20 rounded-lg mr-4 border border-teal-500/20">
+                        <i data-lucide="terminal-square" class="w-5 h-5 text-teal-300"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Outputs & Data</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Querying</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform output', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">output</span></div>
+                        <p class="text-sm text-slate-400">Show all output values.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform output -raw vpc_id', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">output</span> <span class="cmd-arg">-raw</span> <span class="cmd-val">name</span></div>
+                        <p class="text-sm text-slate-400">Print output without quotes (automation).</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                     <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform output -json', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">output</span> <span class="cmd-arg">-json</span></div>
+                        <p class="text-sm text-slate-400">Dump outputs as JSON object.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                     <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform show -json', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">show</span> <span class="cmd-arg">-json</span></div>
+                        <p class="text-sm text-slate-400">Show state or plan file as JSON.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Workspaces -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-cyan-500/20 rounded-lg mr-4 border border-cyan-500/20">
+                        <i data-lucide="layers" class="w-5 h-5 text-cyan-300"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Workspaces</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Environments</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform workspace list', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">workspace list</span></div>
+                        <p class="text-sm text-slate-400">List all workspaces (default is 'default').</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform workspace new dev', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">workspace new</span> <span class="cmd-val">dev</span></div>
+                        <p class="text-sm text-slate-400">Create and switch to a new workspace.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform workspace select dev', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">workspace select</span> <span class="cmd-val">dev</span></div>
+                        <p class="text-sm text-slate-400">Switch to an existing workspace.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform workspace delete dev', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">workspace delete</span> <span class="cmd-val">dev</span></div>
+                        <p class="text-sm text-slate-400">Delete a workspace (must be empty).</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Debugging -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-orange-500/20 rounded-lg mr-4 border border-orange-500/20">
+                        <i data-lucide="bug" class="w-5 h-5 text-orange-300"></i>
+                    </div>
+                     <div>
+                        <h2 class="text-xl font-bold text-white">Debugging</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Troubleshooting</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('export TF_LOG=DEBUG', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base text-orange-300">export</span> <span class="cmd-arg">TF_LOG</span>=<span class="cmd-val">DEBUG</span></div>
+                        <p class="text-sm text-slate-400">Enable verbose logging to stderr.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                     <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform graph', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">graph</span></div>
+                        <p class="text-sm text-slate-400">Output visual dependency graph (DOT).</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform force-unlock LOCK_ID', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">force-unlock</span> <span class="cmd-val">id</span></div>
+                        <p class="text-sm text-slate-400">Unlock state if Terraform crashed.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. Maintenance & Code -->
+        <div class="mb-8 break-inside-avoid command-card">
+            <div class="glass-card rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="p-2 bg-pink-500/20 rounded-lg mr-4 border border-pink-500/20">
+                        <i data-lucide="code-2" class="w-5 h-5 text-pink-300"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Code Quality</h2>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Linting</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform fmt -recursive', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">fmt</span> <span class="cmd-arg">-recursive</span></div>
+                        <p class="text-sm text-slate-400">Format all config files in directory.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                     <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform fmt -check', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">fmt</span> <span class="cmd-arg">-check</span></div>
+                        <p class="text-sm text-slate-400">Check if files are formatted (for CI).</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                    <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform validate', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">validate</span></div>
+                        <p class="text-sm text-slate-400">Check for syntax and type errors.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                     <div class="command-row p-3 rounded" onclick="copyToClipboard('terraform import resource_id', this)">
+                        <div class="code-font text-sm mb-1"><span class="cmd-base">terraform</span> <span class="cmd-arg">import</span> <span class="cmd-val">id</span></div>
+                        <p class="text-sm text-slate-400">Import existing infrastructure.</p>
+                        <span class="copy-tooltip">Copied!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center text-slate-500 pb-10 text-sm relative z-10">
+        <p>Click any command to copy it to clipboard.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize Icons with safety check
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            } else {
+                console.warn("Lucide icons failed to load. Check your internet connection or CDN availability.");
+            }
+
+            // Search Function
+            const searchInput = document.getElementById('searchInput');
+            const cards = document.querySelectorAll('.command-card');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    cards.forEach(card => {
+                        const text = card.textContent.toLowerCase();
+                        if (typeof gsap !== 'undefined') {
+                            if (text.includes(searchTerm)) {
+                                card.style.display = 'block';
+                                gsap.to(card, { opacity: 1, duration: 0.3 });
+                            } else {
+                                card.style.display = 'none';
+                                gsap.to(card, { opacity: 0, duration: 0.3 });
+                            }
+                        } else {
+                            // Fallback if GSAP fails
+                            card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+                        }
+                    });
+                });
+            }
+
+            // Entrance Animation with safety check
+            if (typeof gsap !== 'undefined') {
+                gsap.from(".command-card", {
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.1,
+                    ease: "power3.out"
+                });
+                
+                gsap.from("header", {
+                    y: -30,
+                    opacity: 0,
+                    duration: 1,
+                    ease: "power3.out"
+                });
+            }
+        });
+
+        // Copy Function
+        function copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text).then(() => {
+                const tooltip = element.querySelector('.copy-tooltip');
+                
+                // Flash animation using GSAP if available, else simple CSS fallback (implicit)
+                if (typeof gsap !== 'undefined') {
+                    gsap.fromTo(element, 
+                        { backgroundColor: "rgba(74, 222, 128, 0.2)" }, 
+                        { backgroundColor: "transparent", duration: 0.5 }
+                    );
+                }
+                
+                // Tooltip animation
+                if(tooltip) {
+                    tooltip.style.opacity = '1';
+                    setTimeout(() => {
+                        tooltip.style.opacity = '0';
+                    }, 1500);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
